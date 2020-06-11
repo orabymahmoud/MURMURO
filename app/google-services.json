@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "535923509531",
+    "firebase_url": "https://murmuro-857ea.firebaseio.com",
+    "project_id": "murmuro-857ea",
+    "storage_bucket": "murmuro-857ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535923509531:android:40f78c604f7fa99b5a2bbe",
+        "android_client_info": {
+          "package_name": "com.example.murmuro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535923509531-sj6fugr7q0423gtj1qqo7qkngq1ba687.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT1Ns9i8i_PYzjae4ZiO80pmOUccgD1dA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535923509531-sj6fugr7q0423gtj1qqo7qkngq1ba687.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

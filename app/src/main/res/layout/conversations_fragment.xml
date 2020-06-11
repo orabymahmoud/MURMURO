@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="user"
+            type="com.example.murmuro.model.User" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.main.conversations.Conversations">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                >
+
+                <com.github.abdularis.civ.CircleImageView
+                    android:id="@+id/logo_image"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    app:highlightColor="@color/colorBackground"
+                    app:strokeColor="@color/offline"
+                    app:strokeWidth="0px"/>
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/user_name"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@{user.name}"
+                    android:textColor="@color/colorOnSecondary"
+                    android:textStyle="bold"
+                    android:layout_margin="4dp"
+                    />
+
+                <com.github.abdularis.civ.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    app:highlightColor="@color/colorBackground"
+                    app:strokeColor="@color/offline"
+                    app:strokeWidth="0px"/>
+
+            </LinearLayout>
+
+
+            <SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="Search Here"
+                android:layout_margin="8dp"
+                android:background="@drawable/search_back"
+                android:iconifiedByDefault="false"
+                />
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/swipe_refresh_layout"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/conversation_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/conversation_item"
+                    android:splitMotionEvents="true"
+                    android:layout_margin="16dp"
+                    />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            />
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/conversations">
+
+    <fragment
+        android:id="@+id/calls"
+        android:name="com.example.murmuro.ui.main.calls.Calls"
+        android:label="calls_fragment"
+        tools:layout="@layout/calls_fragment" >
+        <action
+            android:id="@+id/action_calls_to_conversations"
+            app:destination="@id/conversations"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_calls_to_poeple"
+            app:destination="@id/poeple"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_calls_to_groups"
+            app:destination="@id/groups"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_calls_to_liveTranslation"
+            app:destination="@id/liveTranslation" />
+    </fragment>
+    <fragment
+        android:id="@+id/conversations"
+        android:name="com.example.murmuro.ui.main.conversations.Conversations"
+        android:label="conversations_fragment"
+        tools:layout="@layout/conversations_fragment" >
+        <action
+            android:id="@+id/action_conversations_to_calls"
+            app:destination="@id/calls"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_conversations_to_poeple"
+            app:destination="@id/poeple"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_conversations_to_groups"
+            app:destination="@id/groups"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_conversations_to_chat"
+            app:destination="@id/chat" />
+        <action
+            android:id="@+id/action_conversations_to_liveTranslation"
+            app:destination="@id/liveTranslation" />
+    </fragment>
+    <fragment
+        android:id="@+id/groups"
+        android:name="com.example.murmuro.ui.main.groups.Groups"
+        android:label="groups_fragment"
+        tools:layout="@layout/groups_fragment" >
+        <action
+            android:id="@+id/action_groups_to_conversations"
+            app:destination="@id/conversations"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_groups_to_poeple"
+            app:destination="@id/poeple"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_groups_to_calls"
+            app:destination="@id/calls"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_groups_to_liveTranslation"
+            app:destination="@id/liveTranslation" />
+    </fragment>
+    <fragment
+        android:id="@+id/poeple"
+        android:name="com.example.murmuro.ui.main.people.People"
+        android:label="poeple_fragment"
+        tools:layout="@layout/people_fragment" >
+        <action
+            android:id="@+id/action_poeple_to_conversations"
+            app:destination="@id/conversations"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_poeple_to_calls"
+            app:destination="@id/calls"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_poeple_to_groups"
+            app:destination="@id/groups"
+            app:popUpTo="@id/main_nav" />
+        <action
+            android:id="@+id/action_poeple_to_personProfile"
+            app:destination="@id/personProfile" />
+        <action
+            android:id="@+id/action_poeple_to_chat"
+            app:destination="@id/chat" />
+        <action
+            android:id="@+id/action_poeple_to_liveTranslation"
+            app:destination="@id/liveTranslation" />
+    </fragment>
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.murmuro.ui.main.profile.Profile"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
+    <fragment
+        android:id="@+id/chat"
+        android:name="com.example.murmuro.ui.main.chat.Chat"
+        android:label="chat_fragment"
+        tools:layout="@layout/chat_fragment" >
+        <argument
+            android:name="conversationId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/liveTranslation"
+        android:name="com.example.murmuro.ui.main.livetranslation.LiveTranslation"
+        android:label="live_translation_fragment"
+        tools:layout="@layout/live_translation_fragment" />
+    <fragment
+        android:id="@+id/editProfile"
+        android:name="com.example.murmuro.ui.main.editprofile.EditProfile"
+        android:label="edit_profile_fragment"
+        tools:layout="@layout/edit_profile_fragment" />
+    <fragment
+        android:id="@+id/personProfile"
+        android:name="com.example.murmuro.ui.main.personprofile.PersonProfile"
+        android:label="PersonProfile" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="bio"
+            app:argType="string" />
+        <argument
+            android:name="photo"
+            app:argType="string" />
+        <argument
+            android:name="status"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="city"
+            app:argType="string" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_personProfile_to_chat"
+            app:destination="@id/chat" />
+    </fragment>
+</navigation>

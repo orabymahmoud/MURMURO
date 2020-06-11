@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5AB6B3</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="date_time">#FFEB3B</color>
+    <color name="logo">#5AB6B3</color>
+    <color name="chat">#70CADB</color>
+    <color name="add_group_icon">#5B9AAA</color>
+    <color name="icon_in_a_buttom">#746F6F</color>
+    <color name="save_button_in_my_profile_edit">#70CADB</color>
+    <color name="call_and_message_button_in_profile_activity">#ECECEC</color>
+    <color name="send_icon_in_a_chat_activity">#44B994</color>
+    <color name="time_of_chat_online_or_offline">#C5C5C5</color>
+    <color name="call_button_in_calls_activity">#3DBA91</color>
+    <color name="backgrouned_color_in_profile_activity">#F5F5F5</color>
+
+    <color name="colorSecondary">#70CADB</color>
+    <color name="colorBackground">#FCFAFA</color>
+    <color name="colorError">#D81B60</color>
+
+    <!-- New MaterialComponents attributes. -->
+    <color name="colorPrimaryVariant">#44B994</color>
+    <color name="colorSecondaryVariant">#3D7683</color>
+    <color name="colorSurface">#F5F5F5</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSecondary">#1D2974</color>
+    <color name="colorOnBackground">#FFFFFF</color>
+    <color name="colorOnError">#D81B60</color>
+    <color name="colorOnSurface">#FFFFFF</color>
+    <color name="scrimBackground">#746F6F</color>
+    <color name="online">#3AFF00</color>
+    <color name="offline">#F7FF00</color>
+    <color name="busy">#FF0000</color>
+    <color name="edit_p">#FFFFFF</color>
+
+
+
+</resources>

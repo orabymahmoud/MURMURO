@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.circularreveal.CircularRevealLinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@color/design_default_color_background"
+        android:gravity="center"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/splash_logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/murmuro"
+            android:gravity="center"
+            android:textSize="30sp"
+
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="16dp"
+            />
+    </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+</layout>

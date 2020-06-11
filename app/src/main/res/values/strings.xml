@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Murmuro</string>
+    <string name="deaf_people_chat_app">Deaf people chat app</string>
+    <string name="murmuro">MURMURO</string>
+    <string name="welcome">Welcome</string>
+    <string name="log_in_to_continue">Log in to continue</string>
+    <string name="hint_text">User name</string>
+    <string name="username">User name</string>
+    <string name="password">Password</string>
+    <string name="do_you_forget_password">Do you forget password?</string>
+    <string name="log_in">Log in</string>
+    <string name="phone_number">Phone number</string>
+    <string name="enter_phone_number_to_receive_identity_code">Enter phone to receive identity code</string>
+    <string name="phone">Phone (012345789)</string>
+    <string name="skip">Skip</string>
+    <string name="confirm">Confirm</string>
+    <string name="phone_confirmation">Phone confirmation</string>
+    <string name="we_send_confirmation_code_in_small_messege_on_0123456789">We send confirmation code in small messege on : </string>
+    <string name="you_are_about_one_step_and_create_new_account">You are about one step and create new account</string>
+    <string name="chat">Chat</string>
+    <string name="groups">Groups</string>
+    <string name="calls">Calls</string>
+    <string name="profile">Profile</string>
+    <string name="message">Message</string>
+    <string name="people">People</string>
+    <string name="online">Online</string>
+    <string name="away">Away</string>
+    <string name="busy">Busy</string>
+    <string name="my_profile">My profile</string>
+    <string name="myprofile">My profile</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="emial">E-mail</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="lt">Live Translation</string>
+    <string name="type_message">Type Message</string>
+    <string name="upload">Upload</string>
+    <string name="bio">Bio</string>
+    <string name="try_sign">Try Sign </string>
+    <string name="error_phone">Invalid mobile number</string>
+    <string name="wait_we_will_resend_code_agian_after">Wait we will resend code agian after : </string>
+    <string name="_00_00">00:00</string>
+    <string name="sending_code">Sending Code</string>
+    <string name="vervicatin_error">Error while vervication</string>
+    <string name="resend">resend!</string>
+    <string name="bio_default">I am using Murmuro</string>
+    <string name="profile_default">defaultPhoto.png</string>
+    <string name="invalid_name">Invalid name</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

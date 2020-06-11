@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="senndedMessage"
+            type="com.example.murmuro.model.Message" />
+
+        <variable
+            name="recievedMessage"
+            type="com.example.murmuro.model.Message" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+        >
+
+
+        <LinearLayout
+            android:id="@+id/recieved_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="50dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp"
+            android:background="@drawable/recieved_message_back"
+            >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/message_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:text="@{recievedMessage.text}"
+                android:layout_margin="8dp"
+                android:textColor="@color/colorBackground"
+                />
+
+            <ImageView
+                android:id="@+id/message_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo"
+                android:visibility="gone"
+                />
+
+            <VideoView
+                android:id="@+id/message_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
+
+            <LinearLayout
+                android:id="@+id/message_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/search_back"
+                android:visibility="gone"
+                >
+
+                <ImageView
+                    android:id="@+id/message_audio_play"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_pause"
+                    android:layout_margin="8dp"
+
+                    />
+                <SeekBar
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/message_audio_seekBar"
+                    android:layout_gravity="center"
+                    />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/message_audio_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09:09"
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="12sp"
+                    />
+
+            </LinearLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/message_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="12sp"
+                android:gravity="right"
+                android:layout_margin="4dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sended_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:layout_marginLeft="50dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp"
+            android:background="@drawable/send_message_back"
+            >
+
+            <ImageView
+                android:id="@+id/message_status"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/ic_away"
+                android:layout_gravity="left"
+            />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/s_message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:text="hiiiiiii"
+                android:layout_margin="8dp"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+            <ImageView
+                android:id="@+id/s_message_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo"
+                android:visibility="gone"
+                />
+
+            <VideoView
+                android:id="@+id/s_message_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
+
+            <LinearLayout
+                android:id="@+id/s_message_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:background="@drawable/search_back"
+                android:visibility="gone"
+                >
+
+                <ImageView
+                    android:id="@+id/s_message_audio_play"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_pause"
+                    android:layout_margin="8dp"
+
+                    />
+                <SeekBar
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/s_message_audio_seekBar"
+                    android:layout_gravity="center"
+                    />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/s_message_audio_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09:09"
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="12sp"
+                    />
+
+            </LinearLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/s_message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="12sp"
+                android:gravity="left"
+                android:layout_margin="4dp"
+                />
+        </LinearLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/converstaion_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="10/11/2012"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_margin="4dp"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/converstaion_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00:00AM"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_margin="4dp"
+            />
+    </LinearLayout>
+</layout>

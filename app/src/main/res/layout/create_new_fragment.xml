@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="navigate"
+            type="com.example.murmuro.ui.auth.createNew.CreateNew" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.auth.createNew.CreateNew">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_back"
+                    android:layout_marginBottom="25dp"
+                    android:layout_gravity="left"
+                    android:onClick="@{() -> navigate.back()}"
+                    />
+                <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/date_time"
+                        />
+                    <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/you_are_about_one_step_and_create_new_account"
+                            android:lineSpacingExtra="16sp"
+                            android:textColor="@color/colorPrimaryVariant"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+                            />
+
+                    </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+
+                </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+
+
+                <ernestoyaquello.com.verticalstepperform.VerticalStepperFormView
+                    android:id="@+id/stepper_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:form_circle_background_color="@color/colorPrimary"
+                    app:form_next_button_background_color="@color/colorPrimary"
+                    app:form_next_button_pressed_background_color="@color/colorPrimaryDark"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    />
+
+            </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
+</layout>
