@@ -3,7 +3,6 @@ package com.example.murmuro.di.main;
 import com.example.murmuro.ui.main.calls.Calls;
 import com.example.murmuro.ui.main.chat.Chat;
 import com.example.murmuro.ui.main.conversations.Conversations;
-import com.example.murmuro.ui.main.editprofile.EditProfile;
 import com.example.murmuro.ui.main.groups.Groups;
 import com.example.murmuro.ui.main.livetranslation.LiveTranslation;
 import com.example.murmuro.ui.main.people.People;
@@ -37,8 +36,6 @@ public abstract class MainFragmentBuildersModule {
     @ContributesAndroidInjector
     abstract Profile ContributesProfileFragment();
 
-    @ContributesAndroidInjector
-    abstract EditProfile ContributesEditProfileFragment();
 
     @ContributesAndroidInjector
     abstract PersonProfile ContributesPersonProfile();

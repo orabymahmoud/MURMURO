@@ -12,150 +12,208 @@
         android:layout_height="match_parent"
         tools:context=".ui.main.livetranslation.LiveTranslation">
 
-        <com.google.android.material.circularreveal.CircularRevealLinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             >
-            <com.google.android.material.circularreveal.CircularRevealLinearLayout
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               android:layout_marginBottom="60dp"
+               >
+               <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="60dp"
+                   android:orientation="horizontal"
+                   android:background="@color/colorOnPrimary"
+                   >
+                   <androidx.appcompat.widget.Toolbar
+                       android:id="@+id/toolbar"
+                       android:layout_width="0dp"
+                       android:layout_weight="6"
+                       android:textAlignment="center"
+                       app:navigationIcon="@drawable/ic_back"
+                       android:layout_height="wrap_content"
+                       android:background="@color/colorOnPrimary"
+                       android:minHeight="?attr/actionBarSize"
+                       app:actionViewClass="android.support.v7.widget.SearchView"
+                       app:title="@string/lt"
+                       app:titleTextColor="@color/colorOnSecondary"
+                       android:padding="4dp"
+                       app:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+                   <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                       android:id="@+id/logout"
+                       android:layout_width="0dp"
+                       android:layout_weight="1"
+                       android:layout_height="match_parent"
+                       android:orientation="vertical"
+                       android:layout_gravity="center"
+                       android:gravity="center"
+                       android:layout_margin="5dp"
+                       >
+
+
+                       <com.github.abdularis.civ.CircleImageView
+                           android:id="@+id/profile_icon"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:src="@drawable/logo"
+                           app:highlightColor="@color/colorBackground"
+                           app:strokeColor="@color/colorOnPrimary"
+                           app:strokeWidth="2px"/>
+
+                   </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+               </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+
+               <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:orientation="vertical"
+                   android:layout_margin="8dp"
+                   >
+
+                   <com.otaliastudios.cameraview.CameraView
+                       android:id="@+id/camera"
+                       app:cameraFacing="front"
+                       app:cameraAudio="off"
+                       app:cameraFlash="off"
+                       android:keepScreenOn="true"
+                       android:layout_width="match_parent"
+                       android:layout_height="0dp"
+                       android:layout_weight="6"
+                       android:background="@drawable/search_back"
+                       />
+
+                   <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                       android:id="@+id/translated_text_layout"
+                       android:layout_width="match_parent"
+                       android:layout_height="0dp"
+                       android:background="@color/colorOnPrimary"
+                       android:layout_marginTop="8dp"
+                       android:layout_weight="3"
+                       >
+                       <ScrollView
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           >
+                           <com.google.android.material.textview.MaterialTextView
+                               android:id="@+id/translated_text"
+                               style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:overScrollMode="always"
+                               android:textColor="@color/colorOnSecondary"
+                               android:textSize="20sp"
+                               android:layout_marginBottom="5dp"
+                               />
+                       </ScrollView>
+
+                   </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+
+                   <LinearLayout
+                       android:id="@+id/avtar_layout"
+                       android:layout_width="match_parent"
+                       android:layout_height="0dp"
+                       android:layout_weight="8"
+                       android:layout_gravity="center"
+                       android:gravity="center"
+                       android:visibility="gone"
+                       >
+                       <ImageView
+                           android:id="@+id/avtar_image_view"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+
+                           />
+                   </LinearLayout>
+
+
+
+                   <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                       android:id="@+id/editText_layout"
+                       android:layout_width="match_parent"
+                       android:layout_height="0dp"
+                       android:layout_weight="1"
+                       android:layout_marginTop="8dp"
+                       android:orientation="horizontal"
+                       android:layout_gravity="center"
+                       android:gravity="center"
+                       android:visibility="gone"
+                       >
+                       <LinearLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="50dp"
+                           android:layout_margin="8dp"
+                           android:layout_gravity="center"
+                           android:gravity="center"
+                           android:orientation="horizontal">
+
+                           <com.google.android.material.textfield.TextInputEditText
+                               android:id="@+id/message_edit_text"
+                               android:layout_width="0dp"
+                               android:layout_weight="7"
+                               android:layout_height="wrap_content"
+                               android:padding="8dp"
+                               android:layout_gravity="center"
+                               android:gravity="center"
+                               android:layout_centerVertical="true"
+                               android:background="@drawable/type_message_back"
+                               android:hint="@string/type_message"
+                               android:textColorHint="@color/colorSecondary"
+                               android:textColor="@color/colorPrimaryVariant"
+                               />
+
+                           <ImageView
+                               android:id="@+id/send_image"
+                               android:layout_width="0dp"
+                               android:layout_weight="1"
+                               android:layout_height="20dp"
+                               android:src="@drawable/ic_microphone"
+                               android:layout_alignParentRight="true"
+                               android:layout_centerVertical="true"
+                               android:layout_margin="10dp"
+
+                               />
+
+                       </LinearLayout>
+
+
+                   </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+               </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+
+
+           </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:orientation="horizontal"
-                android:background="@color/colorOnPrimary"
-                >
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="0dp"
-                    android:layout_weight="6"
-                    android:textAlignment="center"
-                    app:navigationIcon="@drawable/ic_back"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorOnPrimary"
-                    android:minHeight="?attr/actionBarSize"
-                    app:actionViewClass="android.support.v7.widget.SearchView"
-                    app:title="@string/lt"
-                    app:titleTextColor="@color/colorOnSecondary"
-                    android:padding="4dp"
-                    app:theme="@style/ThemeOverlay.AppCompat.Dark" />
-
-                <com.google.android.material.circularreveal.CircularRevealLinearLayout
-                    android:id="@+id/logout"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_margin="5dp"
-                    >
-
-
-                    <com.github.abdularis.civ.CircleImageView
-                        android:id="@+id/profile_icon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/logo"
-                        app:highlightColor="@color/colorBackground"
-                        app:strokeColor="@color/colorOnPrimary"
-                        app:strokeWidth="2px"/>
-
-                </com.google.android.material.circularreveal.CircularRevealLinearLayout>
-            </com.google.android.material.circularreveal.CircularRevealLinearLayout>
-
-            <com.google.android.material.circularreveal.CircularRevealLinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:orientation="vertical"
-                android:layout_margin="8dp"
-                >
 
-                <com.otaliastudios.cameraview.CameraView
-                    android:id="@+id/camera"
-                    app:cameraFacing="front"
-                    app:cameraAudio="off"
-                    app:cameraFlash="off"
-                    android:keepScreenOn="true"
+                >
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/avtar_button"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="6"
-                    android:background="@drawable/search_back"
+                    android:layout_height="50dp"
+                    android:text="Avatar"
+                    android:layout_margin="10dp"
                     />
 
-                <com.google.android.material.circularreveal.CircularRevealLinearLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sign_translation_button"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="@color/colorOnPrimary"
-                    android:layout_marginTop="8dp"
-                    android:layout_weight="3">
-                   <ScrollView
-                       android:layout_width="match_parent"
-                       android:layout_height="match_parent"
-                       >
-                       <com.google.android.material.textview.MaterialTextView
-                           android:id="@+id/translated_text"
-                           style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:overScrollMode="always"
-                           android:textColor="@color/colorOnSecondary"
-                           android:textSize="20sp"
-                           android:layout_marginBottom="5dp"
-                           />
-                   </ScrollView>
+                    android:layout_height="50dp"
+                    android:text="Sign language Recognition"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
 
-                </com.google.android.material.circularreveal.CircularRevealLinearLayout>
-                <com.google.android.material.circularreveal.CircularRevealLinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    >
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_margin="8dp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/message_edit_text"
-                            android:layout_width="0dp"
-                            android:layout_weight="7"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/type_message_back"
-                            android:hint="@string/type_message"
-                            android:textColorHint="@color/colorSecondary"
-                            android:textColor="@color/colorPrimaryVariant"
-                            />
-
-                        <ImageView
-                            android:id="@+id/send_image"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_microphone"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="10dp"
-
-                            />
-
-                    </LinearLayout>
-
-
-                </com.google.android.material.circularreveal.CircularRevealLinearLayout>
-            </com.google.android.material.circularreveal.CircularRevealLinearLayout>
-
-
-        </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+        </RelativeLayout>
 
     </FrameLayout>
 </layout>

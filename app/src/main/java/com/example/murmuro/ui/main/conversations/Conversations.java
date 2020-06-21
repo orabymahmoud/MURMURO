@@ -31,6 +31,7 @@ import com.example.murmuro.model.Person;
 import com.example.murmuro.model.User;
 import com.example.murmuro.ui.main.MainActivity;
 import com.example.murmuro.ui.main.groups.GroupsDirections;
+import com.example.murmuro.ui.main.personprofile.PersonProfileDirections;
 import com.example.murmuro.viewModel.ViewModelProviderFactory;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,6 +43,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
+import static android.view.View.GONE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class Conversations extends DaggerFragment {
@@ -152,6 +154,9 @@ public class Conversations extends DaggerFragment {
                                             case SUCCESS:{
                                                 firebaseRecyclerPagingAdapter = firebaseRecyclerPagingAdapterDataResource.data;
                                                 binding.conversationId.setAdapter(firebaseRecyclerPagingAdapter);
+
+                                                binding.swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                                binding.emptyData.setVisibility(GONE);
                                                 break;
                                             }
 
@@ -176,6 +181,8 @@ public class Conversations extends DaggerFragment {
                                                 {
                                                     binding.swipeRefreshLayout.setRefreshing(false);
                                                     Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + firebaseRecyclerPagingAdapterDataResource.message );
+                                                    binding.swipeRefreshLayout.setVisibility(GONE);
+                                                    binding.emptyData.setVisibility(View.VISIBLE);
                                                 }
 
                                                 break;
@@ -183,6 +190,8 @@ public class Conversations extends DaggerFragment {
                                         }
                                     }else {
                                         Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is null" );
+                                        binding.swipeRefreshLayout.setRefreshing(false);
+                                        binding.swipeRefreshLayout.setVisibility(GONE);
                                     }
 
 
@@ -215,6 +224,15 @@ public class Conversations extends DaggerFragment {
 
         binding.conversationId.setAdapter(firebaseRecyclerPagingAdapter);
 
+        binding.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                MainActivity.floatingActionButton_LiveTranslation.setVisibility(View.GONE);
+                Navigation.findNavController(getActivity(), R.id.host_fragment)
+                        .navigate(ConversationsDirections.actionConversationsToProfile());
+            }
+        });
 
     }
 

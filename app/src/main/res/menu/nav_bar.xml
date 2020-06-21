@@ -12,15 +12,15 @@
         android:title="People"
         />
 
-    <item
-        android:id="@+id/groups_item"
-        android:icon="@drawable/ic_group"
-        android:title="Groups"
-        />
+<!--    <item-->
+<!--        android:id="@+id/groups_item"-->
+<!--        android:icon="@drawable/ic_group"-->
+<!--        android:title="Groups"-->
+<!--        />-->
 
-    <item
-        android:id="@+id/calls_item"
-        android:icon="@drawable/ic_communications"
-        android:title="Calls"
-        />
+<!--    <item-->
+<!--        android:id="@+id/calls_item"-->
+<!--        android:icon="@drawable/ic_communications"-->
+<!--        android:title="Calls"-->
+<!--        />-->
 </menu>

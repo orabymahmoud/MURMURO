@@ -137,10 +137,14 @@ public class ConversationsViewModel extends ViewModel {
                  .setPageSize(10)
                  .build();
 
+
+
          DatabasePagingOptions<Conversation> options = new DatabasePagingOptions.Builder<Conversation>()
                  .setLifecycleOwner(lifecycleOwner)
                  .setQuery(conversationDatabaseReference , config, Conversation.class)
                  .build();
+
+
 
          murmuroRepositoryImp.deleteAllConversations();
 
@@ -165,7 +169,6 @@ public class ConversationsViewModel extends ViewModel {
                  }
 
 
-
                  final TextView chat_name  =   myViewHolder.itemView.findViewById(R.id.chat_name);
                  TextView display_message  =   myViewHolder.itemView.findViewById(R.id.chat_display_message);
                  TextView unread_messages  =   myViewHolder.itemView.findViewById(R.id.unread_messages);
@@ -173,12 +176,8 @@ public class ConversationsViewModel extends ViewModel {
                  TextView chat_time = myViewHolder.itemView.findViewById(R.id.chat_time);
                  TextView chat_date = myViewHolder.itemView.findViewById(R.id.chat_date);
 
-                 Date date = new Date(conversation.getLastDateTime());
-                 Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
-                 String date_time  = format.format(date);
-
-                 chat_date.setText(date_time.substring(0,11));
-                 chat_time.setText(date_time.substring(12,19));
+                 chat_time.setText(conversation.getDisplayMessage().getDateTime().toString().substring(8,10) + " : " + conversation.getDisplayMessage().getDateTime().toString().substring(10,12));
+                 chat_date.setText(conversation.getDisplayMessage().getDateTime().toString().substring(6,8)+ " - " + conversation.getDisplayMessage().getDateTime().toString().substring(4,6));
 
                  int unreadmessages_number = (int) Double.parseDouble(conversation.getUndreadMessages().get(conversation.getMembers().get(currentUser).getId()).toString());
 

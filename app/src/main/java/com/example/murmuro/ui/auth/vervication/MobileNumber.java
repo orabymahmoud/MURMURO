@@ -40,11 +40,9 @@ public class MobileNumber extends DaggerFragment {
         return binding.getRoot();
     }
 
-    public void back()
-    {
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(MobileNumberDirections.actionMobileNumberToCreateNew());
+    public void back() {
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
     }
-
     public void Confirm()
     {
         String phone = binding.mobileEt.getText().toString();

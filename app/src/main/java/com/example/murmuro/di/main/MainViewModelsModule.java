@@ -6,7 +6,6 @@ import com.example.murmuro.di.ViewModelKey;
 import com.example.murmuro.ui.main.calls.CallsViewModel;
 import com.example.murmuro.ui.main.chat.ChatViewModel;
 import com.example.murmuro.ui.main.conversations.ConversationsViewModel;
-import com.example.murmuro.ui.main.editprofile.EditProfileViewModel;
 import com.example.murmuro.ui.main.groups.GroupsViewModel;
 import com.example.murmuro.ui.main.livetranslation.LiveTranslation;
 import com.example.murmuro.ui.main.livetranslation.LiveTranslationViewModel;
@@ -56,10 +55,6 @@ public abstract class MainViewModelsModule {
     @ViewModelKey(ProfileViewModel.class)
     public abstract ViewModel bindProfileViewModel(ProfileViewModel viewModel);
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(EditProfileViewModel.class)
-    public abstract ViewModel bindEditProfileViewModel(EditProfileViewModel viewModel);
 
     @Binds
     @IntoMap

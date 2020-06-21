@@ -58,25 +58,25 @@ public class MainActivity extends BaseActivity {
 
                         }
                         break;
-                    case R.id.groups_item:
-                        if(Navigation.findNavController(MainActivity.this, R.id.host_fragment).getCurrentDestination() != null)
-                        {
-                            navigate(2);
-
-                        }else{
-
-                        }
-                        break;
-                    case R.id.calls_item:
-                        if(Navigation.findNavController(MainActivity.this, R.id.host_fragment).getCurrentDestination() != null)
-                        {
-                            navigate(3);
-
-                        }else
-                        {
-
-                        }
-                        break;
+//                    case R.id.groups_item:
+//                        if(Navigation.findNavController(MainActivity.this, R.id.host_fragment).getCurrentDestination() != null)
+//                        {
+//                            navigate(2);
+//
+//                        }else{
+//
+//                        }
+//                        break;
+//                    case R.id.calls_item:
+//                        if(Navigation.findNavController(MainActivity.this, R.id.host_fragment).getCurrentDestination() != null)
+//                        {
+//                            navigate(3);
+//
+//                        }else
+//                        {
+//
+//                        }
+//                        break;
                 }
                 return true;
             }
@@ -206,8 +206,17 @@ public class MainActivity extends BaseActivity {
         super.onRestoreInstanceState(savedInstanceState);
         Navigation.findNavController(this, R.id.host_fragment).restoreState(savedInstanceState.getBundle("nav_state"));
         Navigation.findNavController(this, R.id.host_fragment).setGraph(R.navigation.main_nav);
+        Log.e(TAG, "onRestoreInstanceState: " + Navigation.findNavController(this, R.id.host_fragment).getCurrentDestination().getLabel());
+        if(Navigation.findNavController(this, R.id.host_fragment).getCurrentDestination().getId() == R.id.poeple
+        || (Navigation.findNavController(this, R.id.host_fragment).getCurrentDestination().getId() == R.id.conversations)
+        )
+        {
 
-
+        }else
+        {
+            bottomNavigationView.setVisibility(View.GONE);
+            floatingActionButton_LiveTranslation.setVisibility(View.GONE);
+        }
     }
 
 

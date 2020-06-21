@@ -101,8 +101,7 @@ public class CreateNew extends DaggerFragment implements StepperFormListener {
     @Override
     public void onCancelledForm() {
 
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(CreateNewDirections.actionCreateNewToLogIn());
-    }
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -116,6 +115,6 @@ public class CreateNew extends DaggerFragment implements StepperFormListener {
 
     public void back()
     {
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(CreateNewDirections.actionCreateNewToLogIn());
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
     }
 }

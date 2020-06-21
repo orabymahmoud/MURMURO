@@ -23,187 +23,255 @@
 
 
         <LinearLayout
-            android:id="@+id/recieved_message"
-            android:layout_width="wrap_content"
+            android:id="@+id/message_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginRight="50dp"
-            android:paddingLeft="20dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingRight="8dp"
-            android:background="@drawable/recieved_message_back"
             >
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/message_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_gravity="center"
-                android:text="@{recievedMessage.text}"
-                android:layout_margin="8dp"
-                android:textColor="@color/colorBackground"
-                />
-
-            <ImageView
-                android:id="@+id/message_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/logo"
-                android:visibility="gone"
-                />
-
-            <VideoView
-                android:id="@+id/message_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                />
-
             <LinearLayout
-                android:id="@+id/message_audio"
+                android:id="@+id/recieved_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:background="@drawable/search_back"
-                android:visibility="gone"
+                android:orientation="vertical"
+                android:layout_marginRight="50dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingRight="8dp"
+                android:background="@drawable/recieved_message_back"
                 >
 
-                <ImageView
-                    android:id="@+id/message_audio_play"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_pause"
-                    android:layout_margin="8dp"
-
-                    />
-                <SeekBar
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/message_audio_seekBar"
-                    android:layout_gravity="center"
-                    />
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/message_audio_time"
+                <LinearLayout
+                    android:id="@+id/file_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09:09"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    >
+                    <ImageView
+                        android:id="@+id/downloadFile"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_direct_download"
+                        android:layout_margin="8dp"
+
+                        />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/fileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:text="llllllllllllll"
+                        android:layout_margin="8dp"
+                        android:textColor="@color/colorBackground"
+                        />
+
+                </LinearLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/message_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
                     android:layout_gravity="center"
+                    android:text="kkkk"
+                    android:layout_margin="8dp"
+                    android:textColor="@color/colorBackground"
+                    />
+
+                <ImageView
+                    android:id="@+id/message_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/logo"
+                    android:visibility="gone"
+                    />
+
+                <VideoView
+                    android:id="@+id/message_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:visibility="gone"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/message_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:background="@drawable/search_back"
+                    android:visibility="gone"
+                    >
+
+                    <ImageView
+                        android:id="@+id/message_audio_play"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_play"
+                        android:layout_margin="8dp"
+                        android:layout_gravity="center"
+
+                        />
+                    <SeekBar
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/message_audio_seekBar"
+                        android:layout_gravity="center"
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/message_audio_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:09"
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="12sp"
+                        />
+
+                </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/message_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="12sp"
+                    android:gravity="right"
+                    android:layout_margin="4dp"
                     />
 
             </LinearLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/message_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="12sp"
-                android:gravity="right"
-                android:layout_margin="4dp"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/sended_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:orientation="vertical"
-            android:layout_marginLeft="50dp"
-            android:paddingLeft="20dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingRight="8dp"
-            android:background="@drawable/send_message_back"
-            >
-
-            <ImageView
-                android:id="@+id/message_status"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:src="@drawable/ic_away"
-                android:layout_gravity="left"
-            />
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/s_message_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_gravity="center"
-                android:text="hiiiiiii"
-                android:layout_margin="8dp"
-                android:textColor="@color/colorPrimaryDark"
-                />
-
-            <ImageView
-                android:id="@+id/s_message_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/logo"
-                android:visibility="gone"
-                />
-
-            <VideoView
-                android:id="@+id/s_message_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                />
-
             <LinearLayout
-                android:id="@+id/s_message_audio"
+                android:id="@+id/sended_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:background="@drawable/search_back"
-                android:visibility="gone"
+                android:layout_gravity="right"
+                android:orientation="vertical"
+                android:layout_marginLeft="50dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingRight="8dp"
+                android:background="@drawable/send_message_back"
                 >
 
                 <ImageView
-                    android:id="@+id/s_message_audio_play"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_pause"
-                    android:layout_margin="8dp"
-
-                    />
-                <SeekBar
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/s_message_audio_seekBar"
-                    android:layout_gravity="center"
+                    android:id="@+id/message_status"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_away"
+                    android:layout_gravity="left"
                     />
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/s_message_audio_time"
+                    android:id="@+id/s_message_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09:09"
+                    android:textSize="15sp"
                     android:layout_gravity="center"
+                    android:text="hiiiiiii"
+                    android:layout_margin="8dp"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
                     />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/s_message_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/logo"
+                    android:visibility="gone"
+                    />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/s_message_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="12sp"
-                android:gravity="left"
-                android:layout_margin="4dp"
-                />
+                <VideoView
+                    android:id="@+id/s_message_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:visibility="gone"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/s_file_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    >
+                    <ImageView
+                        android:id="@+id/s_downloadFile"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_direct_download"
+                        android:layout_margin="8dp"
+
+                        />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/s_fileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:text="llllllllllllll"
+                        android:layout_margin="8dp"
+                        android:textColor="@color/colorPrimaryDark"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/s_message_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:background="@drawable/search_back"
+                    android:visibility="gone"
+                    >
+
+                    <ImageView
+                        android:id="@+id/s_message_audio_play"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_play"
+                        android:layout_margin="8dp"
+                        android:layout_gravity="center"
+                        />
+
+                    <SeekBar
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/s_message_audio_seekBar"
+                        android:layout_gravity="center"
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/s_message_audio_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:09"
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="12sp"
+                        />
+
+                </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/s_message_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="12sp"
+                    android:gravity="left"
+                    android:layout_margin="4dp"
+                    />
+            </LinearLayout>
         </LinearLayout>
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/converstaion_date"
             android:layout_width="match_parent"
@@ -225,5 +293,151 @@
             android:gravity="center"
             android:layout_margin="4dp"
             />
+
+        <LinearLayout
+            android:id="@+id/message_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+
+            <LinearLayout
+                android:id="@+id/translate_to_sign_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/titlebook_back"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:padding="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_extensible_markup_language_white"
+                    />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="@string/translate_to_sign_language"
+                    android:textColor="@color/colorOnPrimary"
+                    android:layout_margin="4dp"
+
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/download_file_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/titlebook_back"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:padding="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_direct_download_white"
+                    />
+
+                <com.google.android.material.textview.MaterialTextView
+
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="@string/download"
+                    android:textColor="@color/colorOnPrimary"
+                    android:layout_margin="4dp"
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/delete_message_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/titlebook_back"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:padding="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_delete_white"
+                    />
+
+                <com.google.android.material.textview.MaterialTextView
+
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="@string/delete"
+                    android:textColor="@color/colorOnPrimary"
+                    android:layout_margin="4dp"
+
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/convert_to_voice_message_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/titlebook_back"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:padding="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_microphone_white"
+                    />
+
+                <com.google.android.material.textview.MaterialTextView
+
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="@string/convert_to_voice"
+                    android:textColor="@color/colorOnPrimary"
+                    android:layout_margin="4dp"
+
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 </layout>

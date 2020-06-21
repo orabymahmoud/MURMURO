@@ -206,12 +206,7 @@ public class Confirmation extends DaggerFragment {
     public void Back()
     {
         countDownTimer.cancel();
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(ConfirmationDirections.actionConfirmationToMobileNumber(
-                MobileNumberArgs.fromBundle(getArguments()).getEmail(),
-                MobileNumberArgs.fromBundle(getArguments()).getName(),
-                MobileNumberArgs.fromBundle(getArguments()).getUserName(),
-                MobileNumberArgs.fromBundle(getArguments()).getPassword()
-        ));
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
     }
 
     public void CreateNew()

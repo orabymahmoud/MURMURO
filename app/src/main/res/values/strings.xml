@@ -49,4 +49,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="translate_to_sign_language">Translate to sign language</string>
+    <string name="delete">Delete</string>
+    <string name="download">Download</string>
+    <string name="convert_to_voice">Convert to Voice</string>
+    <string name="password_fake">************</string>
 </resources>

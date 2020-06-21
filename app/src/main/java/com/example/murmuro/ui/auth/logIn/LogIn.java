@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,15 @@ public class LogIn extends DaggerFragment {
 
                 ObserveLogIn();
 
+
+            }
+        });
+
+        binding.skipBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: "  );
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(LogInDirections.actionLogInToLiveTranslation3());
 
             }
         });
@@ -123,11 +133,13 @@ public class LogIn extends DaggerFragment {
         });
 
 
+
+
     }
 
     public void goToCreateNew()
     {
-        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_logIn_to_createNew);
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(LogInDirections.actionLogInToCreateNew());
     }
 
 }

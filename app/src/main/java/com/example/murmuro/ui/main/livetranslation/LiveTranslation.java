@@ -5,7 +5,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,23 +17,35 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.os.Handler;
+import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.RequestManager;
 import com.example.murmuro.R;
 import com.example.murmuro.databinding.LiveTranslationFragmentBinding;
 import com.example.murmuro.machineLearning.Classifier;
 import com.example.murmuro.machineLearning.TensorFlowImageClassifier;
+import com.example.murmuro.model.Message;
+import com.example.murmuro.ui.main.chat.Chat;
 import com.example.murmuro.viewModel.ViewModelProviderFactory;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.otaliastudios.cameraview.BitmapCallback;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Audio;
 import com.otaliastudios.cameraview.filter.Filters;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -38,15 +53,28 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
+import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class LiveTranslation extends DaggerFragment {
 
     private LiveTranslationViewModel mViewModel;
     private LiveTranslationFragmentBinding binding;
+    private Handler handler;
+    private  Runnable runnable;
+    private Handler wordsHandler ;
+    private Runnable wordsRunnable ;
+    private int wordsIndex = 0;
+    private final int REQ_CODE_SPEECH_INPUT = 76;
 
     @Inject
     ViewModelProviderFactory providerFactory;
+    @Inject
+    FirebaseStorage firebaseStorage;
+    @Inject
+    RequestManager requestManager;
 
     private static final String MODEL_PATH = "model.tflite";
     private static final boolean QUANT = true;
@@ -80,17 +108,24 @@ public class LiveTranslation extends DaggerFragment {
 
         binding.camera.setLifecycleOwner(this);
 
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+          handler = new Handler();
+         runnable = new Runnable() {
             @Override
             public void run() {
                // binding.camera.setFilter(Filters.GRAYSCALE.newInstance());
                 binding.camera.setAudio(Audio.OFF);
                 binding.camera.takePicture();
-                handler.postDelayed(this, 2000);
+                if(handler!= null && runnable != null)
+                {
+                    handler.postDelayed(this, 2000);
+                }
             }
         };
-        handler.postDelayed(runnable, 2000);
+        if(handler!= null && runnable != null)
+        {
+            handler.postDelayed(runnable, 2000);
+        }
+
 
         binding.camera.close();
 
@@ -124,15 +159,224 @@ public class LiveTranslation extends DaggerFragment {
 
         initTensorFlowAndLoadModel();
 
+
+        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(getActivity(), R.id.host_fragment).popBackStack();
+            }
+        });
+
+
+        binding.avtarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.camera.setVisibility(View.GONE);
+                binding.camera.close();
+                handler = null;
+                runnable = null;
+
+                binding.avtarLayout.setVisibility(View.VISIBLE);
+                binding.editTextLayout.setVisibility(View.VISIBLE);
+                binding.signTranslationButton.setVisibility(View.VISIBLE);
+                binding.translatedText.setVisibility(View.GONE);
+                binding.avtarButton.setVisibility(View.GONE);
+
+            }
+        });
+
+        binding.messageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().equals(""))
+                {
+                    binding.sendImage.setImageResource(R.drawable.ic_microphone);
+                }else
+                {
+                    binding.sendImage.setImageResource(R.drawable.ic_send);
+                }
+            }
+        });
+
+        binding.sendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!binding.messageEditText.getText().toString().trim().equals(""))
+                {
+                    String text = binding.messageEditText.getText().toString().trim();
+
+                    final List<String> words = new ArrayList<>();
+
+                    String word = "";
+
+                    for(int i=0; i < text.length();i++)
+                    {
+                        if(text.charAt(i) == ' ')
+                        {
+                            Log.e(TAG, "onClick: add " + word );
+                            words.add(word);
+                            word = "";
+                        }else
+                        {
+                            word += text.charAt(i);
+                        }
+                    }
+
+                    if(!word.equals(""))
+                    {
+                        words.add(word);
+                        Log.e(TAG, "onClick: add " + word );
+                    }
+
+
+                    wordsHandler = new Handler();
+                    wordsRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            if(wordsIndex < words.size())
+                            {
+                                firebaseStorage.getReference().child("Signs/" + words.get(wordsIndex) + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        requestManager.asGif().load(uri.toString()).into(binding.avtarImageView);
+                                        if(wordsIndex < words.size())
+                                        {
+                                            Log.e(TAG, "onSuccess: loaded a " + words.get(wordsIndex) );
+                                        }
+                                    }
+                                });
+                                wordsIndex++;
+                            }else
+                            {
+                                wordsIndex = 0;
+                                wordsHandler = null;
+                                wordsRunnable = null;
+                            }
+
+                            if(wordsHandler != null || wordsRunnable != null)
+                            {
+                                wordsHandler.postDelayed(this, 1000);
+                            }
+                        }
+                    };
+                    if(wordsHandler != null || wordsRunnable != null)
+                    {
+                        wordsHandler.postDelayed(wordsRunnable, 1000);
+                    }
+
+                }else
+                {
+                    startVoiceInput();
+                }
+            }
+        });
+
+        binding.signTranslationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                binding.avtarLayout.setVisibility(View.GONE);
+                binding.editTextLayout.setVisibility(View.GONE);
+                binding.signTranslationButton.setVisibility(View.GONE);
+                binding.translatedText.setVisibility(View.VISIBLE);
+                binding.avtarButton.setVisibility(View.VISIBLE);
+
+
+
+                binding.camera.open();
+                binding.camera.setVisibility(View.VISIBLE);
+                binding.camera.setLifecycleOwner(LiveTranslation.this);
+
+                handler = new Handler();
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // binding.camera.setFilter(Filters.GRAYSCALE.newInstance());
+                        binding.camera.setAudio(Audio.OFF);
+                        binding.camera.takePicture();
+                        if(handler!= null && runnable != null) {
+                            handler.postDelayed(this, 2000);
+                        }
+                    }
+                };
+                if(handler!= null && runnable != null) {
+                    handler.postDelayed(runnable, 2000);
+                }
+
+
+                binding.camera.addCameraListener(new CameraListener() {
+                    @Override
+                    public void onPictureTaken(final PictureResult result) {
+                        result.toBitmap(40, 40, new BitmapCallback() {
+                            @SuppressLint("WrongThread")
+                            @Override
+                            public void onBitmapReady(@Nullable Bitmap bitmap) {
+
+                                bitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+                                if(bitmap != null)
+                                {
+                                    final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
+
+                                    Log.d(TAG, "oraby onBitmapReady: " + results.toString());
+
+                                    String message = "";
+
+                                    for(int i=0; i<results.size();i++)
+                                    {
+                                        message +=  results.get(i).getTitle() + " ";
+                                    }
+
+                                    binding.messageEditText.setText(binding.messageEditText.getText() + message);
+                                }
+
+                            }
+                        });
+
+
+                    }
+                });
+
+                initTensorFlowAndLoadModel();
+            }
+        });
+
+
     }
 
 
+    private void startVoiceInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hello, Say your message?");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBundle("nav_state", Navigation.findNavController(getActivity(), R.id.host_fragment).saveState());
-        Log.e(TAG, "onSaveInstanceState: " +  Navigation.findNavController(getActivity(), R.id.host_fragment).saveState());
+
+           try {
+               outState.putBundle("nav_state", Navigation.findNavController(getActivity(), R.id.host_fragment).saveState());
+               Log.e(TAG, "onSaveInstanceState: " +  Navigation.findNavController(getActivity(), R.id.host_fragment).saveState());
+
+           }catch (Exception e)
+           {}
     }
     @Override
     public void onPause() {
@@ -168,4 +412,16 @@ public class LiveTranslation extends DaggerFragment {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK
+                && data != null  )
+        {
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            binding.messageEditText.setText(result.get(0));
+            Log.e(TAG, "onActivityResult: " +  (result.get(0)));
+
+        }
+    }
 }

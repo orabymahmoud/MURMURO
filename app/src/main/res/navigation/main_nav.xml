@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_conversations_to_liveTranslation"
             app:destination="@id/liveTranslation" />
+        <action
+            android:id="@+id/action_conversations_to_profile"
+            app:destination="@id/profile" />
     </fragment>
     <fragment
         android:id="@+id/groups"
@@ -117,11 +120,6 @@
         android:name="com.example.murmuro.ui.main.livetranslation.LiveTranslation"
         android:label="live_translation_fragment"
         tools:layout="@layout/live_translation_fragment" />
-    <fragment
-        android:id="@+id/editProfile"
-        android:name="com.example.murmuro.ui.main.editprofile.EditProfile"
-        android:label="edit_profile_fragment"
-        tools:layout="@layout/edit_profile_fragment" />
     <fragment
         android:id="@+id/personProfile"
         android:name="com.example.murmuro.ui.main.personprofile.PersonProfile"

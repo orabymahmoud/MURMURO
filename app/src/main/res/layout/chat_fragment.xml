@@ -221,6 +221,53 @@
                     android:layout_margin="10dp"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/media_upload"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                >
+                <ImageView
+                    android:id="@+id/file_upload"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_file_upload"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/gif_upload"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_gif"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/vido_upload"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_video"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/recored_upload"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_audio_upload"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    />
+            </LinearLayout>
         </LinearLayout>
 
         <ProgressBar

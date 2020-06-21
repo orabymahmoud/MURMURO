@@ -1,13 +1,427 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.main.profile.Profile">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <data>
+        <variable
+            name="person"
+            type="com.example.murmuro.model.User" />
+
+        <variable
+            name="navigate"
+            type="com.example.murmuro.ui.main.personprofile.PersonProfile" />
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        tools:context=".ui.main.profile.Profile">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                >
+
+                <ImageView
+                    android:id="@+id/back_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_back"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:onClick="@{() -> navigate.back()}"
+                    />
+
+                <com.github.abdularis.civ.CircleImageView
+                    android:id="@+id/logo_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    android:layout_gravity="center"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="8dp"
+                    app:highlightColor="@color/colorBackground"
+                    app:strokeColor="@color/offline"
+                    app:strokeWidth="0px"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/profile"
+                    android:textColor="@color/colorOnSecondary"
+                    android:textStyle="bold"
+                    android:layout_margin="4dp"
+
+                    />
+
+            </RelativeLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        >
+                        <com.github.abdularis.civ.CircleImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/logo"
+                            android:layout_margin="25dp"
+                            app:highlightColor="@color/colorBackground"
+                            app:strokeColor="@color/time_of_chat_online_or_offline"
+                            app:strokeWidth="2px"/>
+
+<!--                        <com.github.abdularis.civ.CircleImageView-->
+<!--                            android:id="@+id/status_image"-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/ic_busy"-->
+<!--                            android:layout_marginTop="90dp"-->
+<!--                            android:layout_marginLeft="20dp"-->
+<!--                            app:highlightColor="@color/colorBackground"-->
+<!--                            app:strokeColor="@color/time_of_chat_online_or_offline"-->
+<!--                            app:strokeWidth="2px"/>-->
+                    </RelativeLayout>
+
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_margin="16dp"
+                            android:orientation="horizontal">
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:layout_margin="16dp"
+                            android:visibility="gone"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                android:id="@+id/video_FAB"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_communications_white"
+
+                                />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/email_titlebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/titlebook_back"
+                        android:layout_margin="16dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_email_white"
+                            />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/e_mail"
+                            android:layout_width="0dp"
+                            android:layout_weight="5"
+                            android:layout_height="match_parent"
+                            android:textSize="15sp"
+                            android:text="@{person.email}"
+                            android:textColor="@color/colorOnPrimary"
+                            android:layout_margin="4dp"
+
+                            android:layout_gravity="center"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/edit_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        >
+                        <EditText
+                            android:id="@+id/email_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter new mail"
+                            android:textColorHint="@color/colorSecondary"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:inputType="textEmailAddress"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/save_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:layout_margin="16dp"
+                            android:text="@string/save"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/name_titlebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/titlebook_back"
+                        android:layout_margin="16dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_user_white"
+                            />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/profilename"
+                            android:layout_width="0dp"
+                            android:layout_weight="5"
+                            android:layout_height="match_parent"
+                            android:textSize="15sp"
+                            android:text="@{person.name}"
+                            android:textColor="@color/colorOnPrimary"
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/edit_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        >
+                        <EditText
+                            android:id="@+id/name_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter new name"
+                            android:textColorHint="@color/colorSecondary"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:inputType="text"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/save_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:layout_margin="16dp"
+                            android:text="@string/save"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/bio_titlebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/titlebook_back"
+                        android:layout_margin="16dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_flag"
+                            />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/profile_bio"
+                            android:layout_width="0dp"
+                            android:layout_weight="5"
+                            android:layout_height="match_parent"
+                            android:textSize="15sp"
+                            android:text="@{person.bio}"
+                            android:textColor="@color/colorOnPrimary"
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/edit_bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        >
+
+                        <EditText
+                            android:id="@+id/bio_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter new bio"
+                            android:textColorHint="@color/colorSecondary"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:inputType="text"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/save_bio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:layout_margin="16dp"
+                            android:text="@string/save"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/password_titlebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/titlebook_back"
+                        android:layout_margin="16dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_lock_white"
+                            />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/profile_password"
+                            android:layout_width="0dp"
+                            android:layout_weight="5"
+                            android:layout_height="match_parent"
+                            android:textSize="15sp"
+                            android:text="@string/password_fake"
+                            android:textColor="@color/colorOnPrimary"
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/edit_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        >
+                        <EditText
+                            android:id="@+id/current_password_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter Current Password"
+                            android:textColorHint="@color/colorSecondary"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:inputType="textPassword"
+                            />
+
+                        <EditText
+                            android:id="@+id/new_password_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter new Password"
+                            android:textColorHint="@color/colorSecondary"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:inputType="textPassword"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/save_password"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:layout_margin="16dp"
+                            android:text="@string/save"
+                            />
+                    </LinearLayout>
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/logout_FAB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_logout"
+                        android:tintMode="multiply"
+                        android:layout_gravity="center"
+                        android:layout_margin="16dp"
+                        android:backgroundTint="@color/colorError"
+                        />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
+</layout>

@@ -6,7 +6,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
@@ -59,6 +66,7 @@ import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions;
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter;
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,6 +79,8 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
+import static android.app.Activity.RESULT_OK;
+import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class Chat extends DaggerFragment {
@@ -92,6 +102,15 @@ public class Chat extends DaggerFragment {
     RequestManager requestManager;
 
     FirebaseRecyclerPagingAdapter firebaseRecyclerPagingAdapter;
+
+    private Uri filePath;
+
+    private final int PICK_IMAGE_REQUEST = 71;
+    private final int PICKFILE_RESULT_CODE = 72;
+    private final int PICKVIDEO_RESULT_CODE = 73;
+    private final int PICKRECORED_RESULT_CODE = 74;
+    private final int PICKGIF_RESULT_CODE = 75;
+    private final int REQ_CODE_SPEECH_INPUT = 76;
 
     Person frienUser = null;
     Person curentUserAsPerson = null;
@@ -121,6 +140,8 @@ public class Chat extends DaggerFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, providerFactory).get(ChatViewModel.class);
+        mViewModel.setActivity(getActivity());
+        mViewModel.setContext(getContext());
         if(savedInstanceState != null)
         {
             Navigation.findNavController(getActivity(), R.id.host_fragment).restoreState(savedInstanceState.getBundle("nav_state"));
@@ -129,7 +150,7 @@ public class Chat extends DaggerFragment {
 
         conversationId = ChatArgs.fromBundle(getArguments()).getConversationId();
 
-        mViewModel.getCurrentUserDataResourceMutableLiveData().observe(getActivity(), new Observer<DataResource<User>>() {
+        mViewModel.getCurrentUserDataResourceMutableLiveData().observe(getViewLifecycleOwner(), new Observer<DataResource<User>>() {
             @Override
             public void onChanged(final DataResource<User> userDataResource) {
                 if(userDataResource != null)
@@ -163,7 +184,7 @@ public class Chat extends DaggerFragment {
                             );
 
                             mViewModel.getConversationDataResourceMutableLiveData(conversationId)
-                                    .observe(getActivity(), new Observer<DataResource<Conversation>>() {
+                                    .observe(getViewLifecycleOwner(), new Observer<DataResource<Conversation>>() {
                                         @Override
                                         public void onChanged(DataResource<Conversation> conversationDataResource) {
                                             if(conversationDataResource != null)
@@ -346,7 +367,7 @@ public class Chat extends DaggerFragment {
         binding.sendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!binding.messageEditText.getText().equals(""))
+                if(!binding.messageEditText.getText().toString().trim().equals(""))
                 {
                     Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
 
@@ -362,10 +383,11 @@ public class Chat extends DaggerFragment {
                             "Sended"
                     );
 
-
-
                     mViewModel.sendTextMessage(message,frienUser,conversationId, lastMesssageIndex-1);
                     binding.messageEditText.setText("");
+                }else
+                {
+                    startVoiceInput();
                 }
             }
         });
@@ -382,7 +404,13 @@ public class Chat extends DaggerFragment {
         binding.attachFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if( binding.mediaUpload.getVisibility() == VISIBLE)
+                {
+                    binding.mediaUpload.setVisibility(View.GONE);
+                }else
+                {
+                    binding.mediaUpload.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -397,7 +425,8 @@ public class Chat extends DaggerFragment {
                     binding.camera.close();
                     handler = null;
                     runnable = null;
-                }else{
+                }else
+                    {
 
                     binding.camera.open();
                     binding.camera.setVisibility(View.VISIBLE);
@@ -454,10 +483,46 @@ public class Chat extends DaggerFragment {
         });
 
 
-        binding.sendImage.setOnClickListener(new View.OnClickListener() {
+        binding.attachImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                chooseImage();
+            }
+        });
 
+        binding.fileUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseFile();
+            }
+        });
+
+        binding.gifUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseGif();
+            }
+        });
+
+        binding.recoredUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseRecored();
+            }
+        });
+
+        binding.vidoUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseVideo();
+            }
+        });
+
+
+        binding.backImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(getActivity(), R.id.host_fragment).popBackStack();
             }
         });
 
@@ -525,5 +590,215 @@ public class Chat extends DaggerFragment {
                 }
             }
         });
+    }
+    private void startVoiceInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hello, Say your message?");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+
+        }
+    }
+
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    private void chooseFile() {
+        Intent intent = new Intent();
+        intent.setType("*/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICKFILE_RESULT_CODE);
+    }
+
+    private void chooseRecored() {
+        Intent intent = new Intent();
+        intent.setType("audio/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICKRECORED_RESULT_CODE);
+    }
+
+    private void chooseGif() {
+        Intent intent = new Intent();
+        intent.setType("image/gif");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICKGIF_RESULT_CODE);
+    }
+
+    private void chooseVideo() {
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICKVIDEO_RESULT_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
+
+            filePath = data.getData();
+            String filename = getFileName(data.getData());
+            Message message = new Message(
+                    lastMesssageIndex-1 + "",
+                    "Photo",
+                    filename,
+                    "",
+                    "",
+                    filePath.toString(),
+                    currentDate,
+                    curentUserAsPerson,
+                    "Sended"
+            );
+
+            mViewModel.sendStorageMessage(message, frienUser, conversationId, lastMesssageIndex-1);
+
+        }else if(requestCode == PICKFILE_RESULT_CODE && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
+            filePath = data.getData();
+            Log.e(TAG, "onActivityResult: " + filePath );
+
+            String filename = getFileName(data.getData());
+
+            Log.e(TAG, "onActivityResult:type  "  + getFileName(data.getData()));
+            Log.e(TAG, "onActivityResult: filename " + filename );
+
+            Message message = new Message(
+                    lastMesssageIndex-1 + "",
+                    "File",
+                    filename,
+                    "",
+                    "",
+                    filePath.toString(),
+                    currentDate,
+                    curentUserAsPerson,
+                    "Sended"
+            );
+
+            mViewModel.sendStorageMessage(message, frienUser, conversationId, lastMesssageIndex-1);
+
+        }else if(requestCode == PICKRECORED_RESULT_CODE && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
+            filePath = data.getData();
+            Log.e(TAG, "onActivityResult: " + filePath );
+
+            String filename = getFileName(data.getData());
+
+            Log.e(TAG, "onActivityResult:type  "  + getFileName(data.getData()));
+            Log.e(TAG, "onActivityResult: filename " + filename );
+
+            Message message = new Message(
+                    lastMesssageIndex-1 + "",
+                    "Audio",
+                    filename,
+                    "",
+                    "",
+                    filePath.toString(),
+                    currentDate,
+                    curentUserAsPerson,
+                    "Sended"
+            );
+
+            mViewModel.sendStorageMessage(message, frienUser, conversationId, lastMesssageIndex-1);
+
+        }else if(requestCode == PICKGIF_RESULT_CODE && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
+            filePath = data.getData();
+            Log.e(TAG, "onActivityResult: " + filePath );
+
+            String filename = getFileName(data.getData());
+
+            Log.e(TAG, "onActivityResult:type  "  + getFileName(data.getData()));
+            Log.e(TAG, "onActivityResult: filename " + filename );
+
+            Message message = new Message(
+                    lastMesssageIndex-1 + "",
+                    "Gif",
+                    filename,
+                    "",
+                    "",
+                    filePath.toString(),
+                    currentDate,
+                    curentUserAsPerson,
+                    "Sended"
+            );
+
+            mViewModel.sendStorageMessage(message, frienUser, conversationId, lastMesssageIndex-1);
+
+        }else if(requestCode == PICKVIDEO_RESULT_CODE && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            Long currentDate = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()));
+            filePath = data.getData();
+            Log.e(TAG, "onActivityResult: " + filePath );
+
+            String filename = getFileName(data.getData());
+
+            Log.e(TAG, "onActivityResult:type  "  + getFileName(data.getData()));
+            Log.e(TAG, "onActivityResult: filename " + filename );
+
+            Message message = new Message(
+                    lastMesssageIndex-1 + "",
+                    "Video",
+                    filename,
+                    "",
+                    "",
+                    filePath.toString(),
+                    currentDate,
+                    curentUserAsPerson,
+                    "Sended"
+            );
+
+            mViewModel.sendStorageMessage(message, frienUser, conversationId, lastMesssageIndex-1);
+
+        }else if(requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK
+                && data != null  )
+        {
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            binding.messageEditText.setText(result.get(0));
+            Log.e(TAG, "onActivityResult: " +  (result.get(0)));
+        }
+        else
+        {
+            Log.e(TAG, "onActivityResult: "  + requestCode  );
+        }
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+            Log.e(TAG, "getFileName: " + cursor.toString() );
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 }

@@ -4,6 +4,7 @@ import com.example.murmuro.ui.auth.createNew.CreateNew;
 import com.example.murmuro.ui.auth.logIn.LogIn;
 import com.example.murmuro.ui.auth.vervication.confirmation.Confirmation;
 import com.example.murmuro.ui.auth.vervication.MobileNumber;
+import com.example.murmuro.ui.main.livetranslation.LiveTranslation;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -22,4 +23,7 @@ public abstract class AuthFragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract Confirmation ContributesConfirmationFragment();
+
+    @ContributesAndroidInjector
+    abstract LiveTranslation ContributesLiveTranslation();
 }

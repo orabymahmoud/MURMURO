@@ -9,17 +9,15 @@
         android:label="LogIn" >
         <action
             android:id="@+id/action_logIn_to_createNew"
-            app:destination="@id/createNew"
-            app:popUpTo="@id/auth_nav" />
+            app:destination="@id/createNew" />
+        <action
+            android:id="@+id/action_logIn_to_liveTranslation3"
+            app:destination="@id/liveTranslation3" />
     </fragment>
     <fragment
         android:id="@+id/confirmation"
         android:name="com.example.murmuro.ui.auth.vervication.confirmation.Confirmation"
         android:label="Confirmation" >
-        <action
-            android:id="@+id/action_confirmation_to_mobileNumber"
-            app:destination="@id/mobileNumber"
-            app:popUpTo="@id/auth_nav" />
         <argument
             android:name="phone"
             app:argType="string" />
@@ -47,26 +45,16 @@
         android:name="com.example.murmuro.ui.auth.createNew.CreateNew"
         android:label="CreateNew" >
         <action
-            android:id="@+id/action_createNew_to_logIn"
-            app:destination="@id/logIn"
-            app:popUpTo="@id/auth_nav" />
-        <action
             android:id="@+id/action_createNew_to_mobileNumber"
-            app:destination="@id/mobileNumber"
-            app:popUpTo="@id/auth_nav" />
+            app:destination="@id/mobileNumber" />
     </fragment>
     <fragment
         android:id="@+id/mobileNumber"
         android:name="com.example.murmuro.ui.auth.vervication.MobileNumber"
         android:label="MobileNumber" >
         <action
-            android:id="@+id/action_mobileNumber_to_createNew"
-            app:destination="@id/createNew"
-            app:popUpTo="@id/auth_nav" />
-        <action
             android:id="@+id/action_mobileNumber_to_confirmation"
-            app:destination="@id/confirmation"
-            app:popUpTo="@id/auth_nav" />
+            app:destination="@id/confirmation" />
         <argument
             android:name="email"
             app:argType="string" />
@@ -80,4 +68,8 @@
             android:name="password"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/liveTranslation3"
+        android:name="com.example.murmuro.ui.main.livetranslation.LiveTranslation"
+        android:label="LiveTranslation" />
 </navigation>

@@ -142,8 +142,15 @@ public class PersonProfile extends DaggerFragment {
                                 case SUCCESS:
                                 {
                                     binding.progressBar.setVisibility(View.GONE);
-                                    Navigation.findNavController(getActivity(), R.id.host_fragment)
-                                            .navigate(PersonProfileDirections.actionPersonProfileToChat(stringDataResource.data.getId()));
+                                    if(stringDataResource.data.getId() != null){
+                                        Log.e(TAG, "onChanged: " + stringDataResource.data.getId() );
+                                       if(Navigation.findNavController(getActivity(), R.id.host_fragment).getCurrentDestination().getId()  == R.id.personProfile)
+                                       {
+                                           Navigation.findNavController(getActivity(), R.id.host_fragment)
+                                                   .navigate(PersonProfileDirections.actionPersonProfileToChat(stringDataResource.data.getId()));
+
+                                       }
+                                    }
                                     break;
                                 }
                             }
@@ -159,8 +166,7 @@ public class PersonProfile extends DaggerFragment {
     }
 
     public void back(){
-
-
+        Navigation.findNavController(getActivity(), R.id.host_fragment).popBackStack();
     }
 
 

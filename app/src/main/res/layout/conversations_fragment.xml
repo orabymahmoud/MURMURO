@@ -92,6 +92,19 @@
                     />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/empty_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Welcome in MURMURO \n Go to People \n and start your conversations"
+                android:layout_margin="8dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:visibility="gone"
+                />
+
         </LinearLayout>
 
         <ProgressBar
