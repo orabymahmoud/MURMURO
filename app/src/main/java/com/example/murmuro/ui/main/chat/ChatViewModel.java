@@ -2,6 +2,7 @@ package com.example.murmuro.ui.main.chat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.media.AudioRouting;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import androidx.paging.PagedList;
 
 import com.bumptech.glide.RequestManager;
 import com.example.murmuro.R;
+import com.example.murmuro.Utils;
 import com.example.murmuro.model.Conversation;
 import com.example.murmuro.model.DataResource;
 import com.example.murmuro.model.Message;
@@ -93,6 +95,7 @@ public class ChatViewModel extends ViewModel {
     private MutableLiveData<DataResource<User>> currentUserDataResourceMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<DataResource<Conversation>> conversationDataResourceMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Message, ChatAdapter.MyViewHolder>>>  messagesAdapterDataResourceMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<DataResource<List<Message>>> chatMessages = new MutableLiveData<>();
     private int unreadMessages;
     private String c_date = "-1";
     private String c_time = "-1";
@@ -116,8 +119,6 @@ public class ChatViewModel extends ViewModel {
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
-
-
 
 
     @Inject
@@ -346,7 +347,6 @@ public class ChatViewModel extends ViewModel {
 
 
     }
-
 
 
     public void sendTextMessage(final Message message, final Person friendUser, final String conversatId, long messagesSize)
@@ -583,6 +583,15 @@ public class ChatViewModel extends ViewModel {
                     if(message.getMessageType().equals("Text") || message.getMessageType().equals("Welcome") )
                     {
                         message_textMaterialTextView.setText(message.getText());
+
+                        firebaseStorage.getReference().child("Signs/" + "resetPose" + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                requestManager.asGif().load(uri.toString()).into(message_photoImageView);
+
+                            }
+                        });
+
                     }else if (message.getMessageType().equals("Photo"))
                     {
                         message_textMaterialTextView.setVisibility(GONE);
@@ -745,6 +754,7 @@ public class ChatViewModel extends ViewModel {
                         c_time = message.getDateTime().toString().substring(4,6);
                     }
 
+                    final String message_text = message.getText();
                     // Message options
                     myViewHolder.itemView.findViewById(R.id.translate_to_sign_option).setOnClickListener(new View.OnClickListener()
                     {
@@ -752,19 +762,40 @@ public class ChatViewModel extends ViewModel {
                         public void onClick(View v) {
                             if(message.getMessageType().equals("Text") || message.getMessageType().equals("Welcome") )
                             {
-                                String text = message.getText();
                                 message_photoImageView.setVisibility(VISIBLE);
 
-                                final List<String> words = new ArrayList<>();
+                                String text = message.getText().toLowerCase().trim() + " resetPose ";
+                                text=text.replaceAll("[^a-zA-Z ]", " ");
 
+                                final List<String> words = new ArrayList<>();
                                 String word = "";
+
+                                Log.e(TAG, "onClick: " + text );
 
                                 for(int i=0; i < text.length();i++)
                                 {
+
                                     if(text.charAt(i) == ' ')
                                     {
-                                        Log.e(TAG, "onClick: add " + word );
-                                        words.add(word);
+                                        Log.e(TAG, "onClick: Utils.AVTAR_SIGNS.contains(word.toLowerCase())" + Utils.AVTAR_SIGNS.contains(word.toLowerCase()) );
+
+                                        if(!word.equals(""))
+                                        {
+                                            if(Utils.AVTAR_SIGNS.contains(word.toLowerCase()))
+                                            {
+                                                words.add(word);
+                                                Log.e(TAG, "onClick: add " + word );
+                                            }else{
+
+                                                for(int j=0; j < word.length();j++)
+                                                {
+                                                    words.add(word.charAt(j) + "");
+                                                    Log.e(TAG, "onClick: add " + word.charAt(j) );
+                                                }
+                                            }
+
+                                        }
+
                                         word = "";
                                     }else
                                     {
@@ -772,55 +803,59 @@ public class ChatViewModel extends ViewModel {
                                     }
                                 }
 
-                                if(!word.equals(""))
-                                {
-                                    words.add(word);
-                                    Log.e(TAG, "onClick: add " + word );
-                                }
-
-
+                                Log.e(TAG, "onClick: wordsIndex " + wordsIndex );
                                 wordsHandler = new Handler();
                                 wordsRunnable = new Runnable() {
                                     @Override
                                     public void run() {
                                         if(wordsIndex < words.size())
                                         {
+
                                             firebaseStorage.getReference().child("Signs/" + words.get(wordsIndex) + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
                                                     requestManager.asGif().load(uri.toString()).into(message_photoImageView);
+                                                    if(wordsIndex < words.size()-1)
+                                                    {
+                                                        message_textMaterialTextView.setText(words.get(wordsIndex));
+                                                        message_textMaterialTextView.setTextColor(getContext().getResources().getColor(R.color.date_time));
+                                                    }
+
                                                     if(wordsIndex < words.size())
                                                     {
                                                         Log.e(TAG, "onSuccess: loaded a " + words.get(wordsIndex) );
+                                                        wordsIndex++;
                                                     }
+
+
                                                 }
                                             });
-                                            wordsIndex++;
+
                                         }else
                                         {
                                             wordsIndex = 0;
                                             wordsHandler = null;
                                             wordsRunnable = null;
+                                            message_textMaterialTextView.setText(message_text);
+                                            message_textMaterialTextView.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
                                             message_photoImageView.setVisibility(GONE);
-                                            myViewHolder.itemView.findViewById(R.id.message_options).setVisibility(GONE);
+
                                         }
 
                                         if(wordsHandler != null || wordsRunnable != null)
                                         {
-                                            wordsHandler.postDelayed(this, 1000);
+                                            wordsHandler.postDelayed(this, 3000);
                                         }
                                     }
                                 };
                                 if(wordsHandler != null || wordsRunnable != null)
                                 {
-                                    wordsHandler.postDelayed(wordsRunnable, 1000);
+                                    wordsHandler.postDelayed(wordsRunnable, 3000);
                                 }
 
                             }
                         }
                     });
-
-
 
 
 
@@ -936,6 +971,15 @@ public class ChatViewModel extends ViewModel {
                     if(message.getMessageType().equals("Text") || message.getMessageType().equals("Welcome") )
                     {
                         message_textMaterialTextView.setText(message.getText());
+
+                        firebaseStorage.getReference().child("Signs/" + "resetPose" + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                requestManager.asGif().load(uri.toString()).into(message_photoImageView);
+
+                            }
+                        });
+
                     }else if (message.getMessageType().equals("Photo"))
                     {
                         message_textMaterialTextView.setVisibility(GONE);
@@ -1101,25 +1145,46 @@ public class ChatViewModel extends ViewModel {
 
                     // Message options
 
+                    final String message_text = message.getText();
+
                     myViewHolder.itemView.findViewById(R.id.translate_to_sign_option).setOnClickListener(new View.OnClickListener()
                     {
                         @Override
                         public void onClick(View v) {
                             if(message.getMessageType().equals("Text") || message.getMessageType().equals("Welcome") )
                             {
-                                String text = message.getText();
                                 message_photoImageView.setVisibility(VISIBLE);
+                                String text = message.getText().toLowerCase().trim() + " resetPose ";
+                                text=text.replaceAll("[^a-zA-Z ]", " ");
 
                                 final List<String> words = new ArrayList<>();
-
                                 String word = "";
+
+                                Log.e(TAG, "onClick: " + text );
 
                                 for(int i=0; i < text.length();i++)
                                 {
                                     if(text.charAt(i) == ' ')
                                     {
-                                        Log.e(TAG, "onClick: add " + word );
-                                        words.add(word);
+                                        Log.e(TAG, "onClick: Utils.AVTAR_SIGNS.contains(word.toLowerCase())" + Utils.AVTAR_SIGNS.contains(word.toLowerCase()) );
+
+                                        if(!word.equals(""))
+                                        {
+                                            if(Utils.AVTAR_SIGNS.contains(word.toLowerCase()))
+                                            {
+                                                words.add(word);
+                                                Log.e(TAG, "onClick: add " + word );
+                                            }else{
+
+                                                for(int j=0; j < word.length();j++)
+                                                {
+                                                    words.add(word.charAt(j) + "");
+                                                    Log.e(TAG, "onClick: add " + word.charAt(j) );
+                                                }
+                                            }
+
+                                        }
+
                                         word = "";
                                     }else
                                     {
@@ -1127,48 +1192,53 @@ public class ChatViewModel extends ViewModel {
                                     }
                                 }
 
-                                if(!word.equals(""))
-                                {
-                                    words.add(word);
-                                    Log.e(TAG, "onClick: add " + word );
-                                }
-
-
+                                Log.e(TAG, "onClick: wordsIndex " + wordsIndex );
                                 wordsHandler = new Handler();
                                 wordsRunnable = new Runnable() {
                                     @Override
                                     public void run() {
                                         if(wordsIndex < words.size())
                                         {
+
                                             firebaseStorage.getReference().child("Signs/" + words.get(wordsIndex) + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
                                                     requestManager.asGif().load(uri.toString()).into(message_photoImageView);
-                                                    if(wordsIndex < words.size())
+
+                                                    if(wordsIndex < words.size()-1)
                                                     {
-                                                        Log.e(TAG, "onSuccess: loaded a " + words.get(wordsIndex) );
+                                                        message_textMaterialTextView.setText(words.get(wordsIndex));
+                                                        message_textMaterialTextView.setTextColor(getContext().getResources().getColor(R.color.date_time));
                                                     }
+
+                                                    if(wordsIndex < words.size())
+                                                    {  Log.e(TAG, "onSuccess: loaded a " + words.get(wordsIndex) );
+                                                        wordsIndex++;
+                                                    }
+
                                                 }
                                             });
-                                            wordsIndex++;
+
                                         }else
                                         {
                                             wordsIndex = 0;
                                             wordsHandler = null;
                                             wordsRunnable = null;
+                                            message_textMaterialTextView.setText(message_text);
+                                            message_textMaterialTextView.setTextColor(getContext().getResources().getColor(R.color.colorBackground));
                                             message_photoImageView.setVisibility(GONE);
-                                            myViewHolder.itemView.findViewById(R.id.message_options).setVisibility(GONE);
+
                                         }
 
                                         if(wordsHandler != null || wordsRunnable != null)
                                         {
-                                            wordsHandler.postDelayed(this, 1000);
+                                            wordsHandler.postDelayed(this, 3000);
                                         }
                                     }
                                 };
                                 if(wordsHandler != null || wordsRunnable != null)
                                 {
-                                    wordsHandler.postDelayed(wordsRunnable, 1000);
+                                    wordsHandler.postDelayed(wordsRunnable, 3000);
                                 }
 
                             }
@@ -1335,8 +1405,13 @@ public class ChatViewModel extends ViewModel {
     }
 
 
+    public MutableLiveData<DataResource<List<Message>>> observeMessages()
+    {
+        return chatMessages;
+    }
 
-    private boolean isInternetAvailable() {
+    public boolean isInternetAvailable()
+    {
         try {
             final String command = "ping -c 1 google.com";
             return Runtime.getRuntime().exec(command).waitFor() == 0;
@@ -1345,7 +1420,6 @@ public class ChatViewModel extends ViewModel {
             return false;
         }
     }
-
     private String getTimeString(long millis) {
         StringBuffer buf = new StringBuffer();
 

@@ -22,6 +22,7 @@ import androidx.paging.PagedList;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.Resource;
 import com.example.murmuro.R;
+import com.example.murmuro.model.Conversation;
 import com.example.murmuro.model.DataResource;
 import com.example.murmuro.model.Message;
 import com.example.murmuro.model.Person;
@@ -54,6 +55,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.view.View.GONE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class PeopleViewModel extends ViewModel {
@@ -65,6 +67,7 @@ public class PeopleViewModel extends ViewModel {
     private FirebaseAuth firebaseAuth;
     private Activity activity;
     private RequestManager requestManager;
+    private MutableLiveData<DataResource<List<Person>>> personsMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>> peopleAdapterDataResourceMutableLiveData = new MutableLiveData<>();
 
     @Inject
@@ -85,9 +88,15 @@ public class PeopleViewModel extends ViewModel {
         this.activity = activity;
     }
 
+    public MutableLiveData<DataResource<List<Person>>> getPersonsMutableLiveData() {
+        return personsMutableLiveData;
+    }
 
-    public MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>> getPersonsAdapter(LifecycleOwner lifecycleOwner)
+    public MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>>
+    getPersonsAdapter(LifecycleOwner lifecycleOwner, final String searchQuety)
     {
+        final List<Person> people = new ArrayList<>();
+
         if(isInternetAvailable())
         {
             DatabaseReference userDatabaseReference = firebaseDatabase.getReference("users");
@@ -110,7 +119,27 @@ public class PeopleViewModel extends ViewModel {
                 @Override
                 protected void onBindViewHolder(@NonNull PeopleAdapter.MyViewHolder myViewHolder, int i, @NonNull final Person person) {
 
-                      myViewHolder.bind(person);
+                    Log.e(TAG, "onBindViewHolder: " + person.getName().toLowerCase() );
+                    Log.e(TAG, "onBindViewHolder: " +  searchQuety.toLowerCase());
+
+                    if(!searchQuety.equals(""))
+                    {
+                        if(person.getName().toLowerCase().contains(searchQuety.toLowerCase()) )
+                        {
+                            myViewHolder.bind(person);
+                            people.add(person);
+                        }else
+                        {
+                            myViewHolder.itemView.setVisibility(GONE);
+                        }
+
+                    }else
+                    {
+                        myViewHolder.bind(person);
+                        people.add(person);
+                    }
+
+
                       myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                           @Override
                           public void onClick(View v) {
@@ -158,6 +187,7 @@ public class PeopleViewModel extends ViewModel {
 
                 }
 
+
                 @Override
                 protected void onLoadingStateChanged(@NonNull LoadingState state) {
                     switch (state) {
@@ -169,12 +199,25 @@ public class PeopleViewModel extends ViewModel {
 
                         case LOADED:
                             // Stop Animation
+                            if(personsMutableLiveData != null)
+                            {
+                                personsMutableLiveData.setValue(DataResource.success(people));
+                            }
+
+                            if(people != null)
+                            {
+                                people.clear();
+                            }
                             peopleAdapterDataResourceMutableLiveData.setValue(DataResource.error("LOADED" , (FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>)null));
                             break;
 
                         case FINISHED:
                             //Reached end of Data set
                             peopleAdapterDataResourceMutableLiveData.setValue(DataResource.error("FINISHED" , (FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>)null));
+                            if(personsMutableLiveData != null)
+                            {
+                                personsMutableLiveData.setValue(DataResource.error("" , (List<Person>) people));
+                            }
 
                             break;
 

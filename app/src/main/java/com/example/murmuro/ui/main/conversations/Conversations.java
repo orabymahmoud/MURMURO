@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
@@ -27,6 +29,7 @@ import com.example.murmuro.R;
 import com.example.murmuro.databinding.ConversationsFragmentBinding;
 import com.example.murmuro.model.Conversation;
 import com.example.murmuro.model.DataResource;
+import com.example.murmuro.model.Message;
 import com.example.murmuro.model.Person;
 import com.example.murmuro.model.User;
 import com.example.murmuro.ui.main.MainActivity;
@@ -34,6 +37,7 @@ import com.example.murmuro.ui.main.groups.GroupsDirections;
 import com.example.murmuro.ui.main.personprofile.PersonProfileDirections;
 import com.example.murmuro.viewModel.ViewModelProviderFactory;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter;
 
@@ -50,7 +54,7 @@ public class Conversations extends DaggerFragment {
 
     private ConversationsViewModel mViewModel;
     private ConversationsFragmentBinding binding;
-
+    private User currentUser = null;
     @Inject
     ViewModelProviderFactory providerFactory;
 
@@ -134,6 +138,7 @@ public class Conversations extends DaggerFragment {
                         case SUCCESS:{
                             binding.progressBar.setVisibility(View.GONE);
                             binding.setUser(userDataResource.data);
+                            currentUser = userDataResource.data;
 
                             firebaseStorage.getReference().child("images/"+ userDataResource.data.getPhoto()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
@@ -142,7 +147,7 @@ public class Conversations extends DaggerFragment {
                                 }
                             });
 
-                            mViewModel.getConversationAdapter(userDataResource.data, getViewLifecycleOwner()).observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>>() {
+                            mViewModel.getConversationAdapter(userDataResource.data, getViewLifecycleOwner(), "").observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>>() {
                                 @Override
                                 public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
                                     if(firebaseRecyclerPagingAdapterDataResource != null)
@@ -205,12 +210,187 @@ public class Conversations extends DaggerFragment {
             }
         });
 
+
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.e(TAG, "onQueryTextSubmit: " + query );
+
+                mViewModel.getConversationAdapter(currentUser, getViewLifecycleOwner(), query).observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>>() {
+                    @Override
+                    public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
+                        if(firebaseRecyclerPagingAdapterDataResource != null)
+                        {
+                            switch (firebaseRecyclerPagingAdapterDataResource.status)
+                            {
+                                case SUCCESS:{
+                                    firebaseRecyclerPagingAdapter = firebaseRecyclerPagingAdapterDataResource.data;
+
+                                    Log.e(TAG, "onChanged: " +  firebaseRecyclerPagingAdapterDataResource.data.getItemCount());
+                                    mViewModel.getConversations().observe(getViewLifecycleOwner(), new Observer<DataResource<List<Conversation>>>() {
+                                        @Override
+                                        public void onChanged(DataResource<List<Conversation>> listDataResource) {
+                                            if(listDataResource != null)
+                                            {
+                                                switch(listDataResource.status)
+                                                {
+                                                    case SUCCESS:{
+                                                        if(listDataResource.data != null)
+                                                        {
+                                                            if(listDataResource.data.size() == 0)
+                                                            {
+                                                                if(firebaseRecyclerPagingAdapter != null)
+                                                                {
+                                                                    firebaseRecyclerPagingAdapter.refresh();
+                                                                }
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+
+                                                    case LOADING:{
+                                                        break;
+                                                    }
+                                                    case ERROR:{
+                                                        binding.swipeRefreshLayout.setRefreshing(false);
+                                                        firebaseRecyclerPagingAdapter = null;
+                                                        if(listDataResource.data != null)
+                                                        {
+                                                            if(listDataResource.data.size() == 0)
+                                                            {
+                                                                Toast.makeText(getContext(), "not found search", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                    binding.conversationId.setAdapter(firebaseRecyclerPagingAdapter);
+                                    binding.swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                    binding.emptyData.setVisibility(GONE);
+                                    break;
+                                }
+
+                                case LOADING:{
+                                    binding.swipeRefreshLayout.setRefreshing(true);
+                                    break;
+                                }
+
+                                case ERROR:{
+                                    if(firebaseRecyclerPagingAdapterDataResource.message.equals("LOADED"))
+                                    {
+                                        binding.swipeRefreshLayout.setRefreshing(false);
+                                        Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "LOADED");
+
+                                    }else  if(firebaseRecyclerPagingAdapterDataResource.message.equals("FINISHED"))
+                                    {
+                                        binding.swipeRefreshLayout.setRefreshing(false);
+                                        Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "FINISHED" );
+                                        firebaseRecyclerPagingAdapter = null;
+                                    }else
+                                    {
+                                        binding.swipeRefreshLayout.setRefreshing(false);
+                                        Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + firebaseRecyclerPagingAdapterDataResource.message );
+                                        binding.swipeRefreshLayout.setVisibility(GONE);
+                                        binding.emptyData.setVisibility(View.VISIBLE);
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }else {
+                            Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is null" );
+                            binding.swipeRefreshLayout.setRefreshing(false);
+                            binding.swipeRefreshLayout.setVisibility(GONE);
+                        }
+
+
+                    }
+                });
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals(""))
+                {
+                    mViewModel.getConversationAdapter(currentUser, getViewLifecycleOwner(), "").observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>>() {
+                        @Override
+                        public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
+                            if(firebaseRecyclerPagingAdapterDataResource != null)
+                            {
+                                Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is not  null" );
+                                Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource status "  + firebaseRecyclerPagingAdapterDataResource.status);
+                                switch (firebaseRecyclerPagingAdapterDataResource.status)
+                                {
+                                    case SUCCESS:{
+                                        firebaseRecyclerPagingAdapter = firebaseRecyclerPagingAdapterDataResource.data;
+
+                                        Log.e(TAG, "onChanged: " +  firebaseRecyclerPagingAdapterDataResource.data.getItemCount());
+                                        if(firebaseRecyclerPagingAdapterDataResource.data.getItemCount() == 0)
+                                        {
+                                            firebaseRecyclerPagingAdapter.refresh();
+                                        }
+                                        binding.conversationId.setAdapter(firebaseRecyclerPagingAdapter);
+                                        binding.swipeRefreshLayout.setVisibility(View.VISIBLE);
+                                        binding.emptyData.setVisibility(GONE);
+                                        break;
+                                    }
+
+                                    case LOADING:{
+                                        binding.swipeRefreshLayout.setRefreshing(true);
+                                        break;
+                                    }
+
+                                    case ERROR:{
+                                        if(firebaseRecyclerPagingAdapterDataResource.message.equals("LOADED"))
+                                        {
+                                            binding.swipeRefreshLayout.setRefreshing(false);
+                                            Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "LOADED");
+
+                                        }else  if(firebaseRecyclerPagingAdapterDataResource.message.equals("FINISHED"))
+                                        {
+                                            binding.swipeRefreshLayout.setRefreshing(false);
+                                            Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "FINISHED" );
+
+                                        }else
+                                        {
+                                            binding.swipeRefreshLayout.setRefreshing(false);
+                                            Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + firebaseRecyclerPagingAdapterDataResource.message );
+                                            binding.swipeRefreshLayout.setVisibility(GONE);
+                                            binding.emptyData.setVisibility(View.VISIBLE);
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }else {
+                                Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is null" );
+                                binding.swipeRefreshLayout.setRefreshing(false);
+                                binding.swipeRefreshLayout.setVisibility(GONE);
+                            }
+
+
+                        }
+                    });
+                }
+                return false;
+            }
+
+        });
+
+
+
         if(firebaseRecyclerPagingAdapter != null)
         {
             firebaseRecyclerPagingAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
                     super.onItemRangeInserted(positionStart, itemCount);
+                    Log.e(TAG, "onItemRangeInserted: itemCount itemCount itemCount " + itemCount );
                 }
             });
         }

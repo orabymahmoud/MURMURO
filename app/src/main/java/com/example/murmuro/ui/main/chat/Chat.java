@@ -430,6 +430,7 @@ public class Chat extends DaggerFragment {
 
                     binding.camera.open();
                     binding.camera.setVisibility(View.VISIBLE);
+                        binding.camera.setPlaySounds(false);
                     binding.camera.setLifecycleOwner(Chat.this);
 
                      handler = new Handler();
@@ -438,12 +439,13 @@ public class Chat extends DaggerFragment {
                         public void run() {
                             // binding.camera.setFilter(Filters.GRAYSCALE.newInstance());
                             binding.camera.setAudio(Audio.OFF);
+                            binding.camera.setPlaySounds(false);
                             binding.camera.takePicture();
                             handler.postDelayed(this, 2000);
                         }
                     };
-                    handler.postDelayed(runnable, 2000);
 
+                    handler.postDelayed(runnable, 2000);
 
                     binding.camera.addCameraListener(new CameraListener() {
                         @Override

@@ -80,6 +80,8 @@
                        app:cameraFacing="front"
                        app:cameraAudio="off"
                        app:cameraFlash="off"
+                       app:cameraPlaySounds="false"
+                       app:cameraMode="picture"
                        android:keepScreenOn="true"
                        android:layout_width="match_parent"
                        android:layout_height="0dp"
@@ -99,16 +101,33 @@
                            android:layout_width="match_parent"
                            android:layout_height="match_parent"
                            >
-                           <com.google.android.material.textview.MaterialTextView
-                               android:id="@+id/translated_text"
-                               style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+                           <RelativeLayout
                                android:layout_width="match_parent"
-                               android:layout_height="wrap_content"
-                               android:overScrollMode="always"
-                               android:textColor="@color/colorOnSecondary"
-                               android:textSize="20sp"
-                               android:layout_marginBottom="5dp"
-                               />
+                               android:layout_height="match_parent"
+                               >
+                               <ImageView
+                                   android:id="@+id/text_to_speech"
+                                   android:layout_width="30dp"
+                                   android:src="@drawable/ic_microphone"
+                                   android:layout_margin="10dp"
+                                   android:layout_height="30dp"
+                                   android:layout_alignParentEnd="true"
+                                   />
+                               <com.google.android.material.textview.MaterialTextView
+                                   android:id="@+id/translated_text"
+                                   style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:overScrollMode="always"
+                                   android:textColor="@color/colorOnSecondary"
+                                   android:textSize="20sp"
+                                   android:layout_marginTop="40dp"
+                                   android:layout_marginBottom="5dp"
+                                   />
+
+
+                           </RelativeLayout>
+
                        </ScrollView>
 
                    </com.google.android.material.circularreveal.CircularRevealLinearLayout>
@@ -121,13 +140,28 @@
                        android:layout_gravity="center"
                        android:gravity="center"
                        android:visibility="gone"
+                       android:orientation="vertical"
                        >
+
+                       <com.google.android.material.textview.MaterialTextView
+                           android:id="@+id/running_sign"
+                           style="@style/MaterialAlertDialog.MaterialComponents.Title.Panel"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:overScrollMode="always"
+                           android:textColor="@color/date_time"
+                           android:textSize="20sp"
+                           android:gravity="center"
+                           android:layout_marginTop="40dp"
+                           android:layout_marginBottom="5dp"
+                           />
+
                        <ImageView
                            android:id="@+id/avtar_image_view"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
+                           android:layout_width="match_parent"
+                           android:layout_height="300dp"
                            android:layout_gravity="center"
-
+                           android:layout_margin="8dp"
                            />
                    </LinearLayout>
 

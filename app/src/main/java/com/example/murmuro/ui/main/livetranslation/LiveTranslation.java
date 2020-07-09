@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 
 import android.os.Handler;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
 import com.example.murmuro.R;
+import com.example.murmuro.Utils;
 import com.example.murmuro.databinding.LiveTranslationFragmentBinding;
 import com.example.murmuro.machineLearning.Classifier;
 import com.example.murmuro.machineLearning.TensorFlowImageClassifier;
@@ -39,6 +41,8 @@ import com.otaliastudios.cameraview.BitmapCallback;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Audio;
+import com.otaliastudios.cameraview.controls.Flash;
+import com.otaliastudios.cameraview.controls.Mode;
 import com.otaliastudios.cameraview.filter.Filters;
 
 import java.text.SimpleDateFormat;
@@ -82,6 +86,7 @@ public class LiveTranslation extends DaggerFragment {
     private static final int INPUT_SIZE = 40;
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
+    private TextToSpeech t1;
 
     public static LiveTranslation newInstance() {
         return new LiveTranslation();
@@ -102,8 +107,14 @@ public class LiveTranslation extends DaggerFragment {
         mViewModel = ViewModelProviders.of(this,providerFactory).get(LiveTranslationViewModel.class);
         if(savedInstanceState != null)
         {
-            Navigation.findNavController(getActivity(), R.id.host_fragment).restoreState(savedInstanceState.getBundle("nav_state"));
-            Log.e(TAG, "onRestoreInstanceState: " +  savedInstanceState.getBundle("nav_state").describeContents());
+            try {
+                Navigation.findNavController(getActivity(), R.id.host_fragment).restoreState(savedInstanceState.getBundle("nav_state"));
+                Log.e(TAG, "onRestoreInstanceState: " +  savedInstanceState.getBundle("nav_state").describeContents());
+
+            }catch (Exception e)
+            {}
+
+
         }
 
         binding.camera.setLifecycleOwner(this);
@@ -179,8 +190,13 @@ public class LiveTranslation extends DaggerFragment {
                 binding.avtarLayout.setVisibility(View.VISIBLE);
                 binding.editTextLayout.setVisibility(View.VISIBLE);
                 binding.signTranslationButton.setVisibility(View.VISIBLE);
-                binding.translatedText.setVisibility(View.GONE);
+                binding.translatedTextLayout.setVisibility(View.GONE);
                 binding.avtarButton.setVisibility(View.GONE);
+
+                if(!mViewModel.isInternetAvailable())
+                {
+                    binding.runningSign.setText("Check Internet Connection");
+                }
 
             }
         });
@@ -209,23 +225,50 @@ public class LiveTranslation extends DaggerFragment {
             }
         });
 
+        firebaseStorage.getReference().child("Signs/" + "resetPose" + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                requestManager.asGif().load(uri.toString()).into(binding.avtarImageView);
+
+            }
+        });
+
         binding.sendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!binding.messageEditText.getText().toString().trim().equals(""))
                 {
-                    String text = binding.messageEditText.getText().toString().trim();
+                    String text = binding.messageEditText.getText().toString().toLowerCase().trim() + " resetPose ";
+                    text=text.replaceAll("[^a-zA-Z ]", " ");
 
                     final List<String> words = new ArrayList<>();
-
                     String word = "";
+
+                    Log.e(TAG, "onClick: " + text );
 
                     for(int i=0; i < text.length();i++)
                     {
                         if(text.charAt(i) == ' ')
                         {
-                            Log.e(TAG, "onClick: add " + word );
-                            words.add(word);
+                            Log.e(TAG, "onClick: Utils.AVTAR_SIGNS.contains(word.toLowerCase())" + Utils.AVTAR_SIGNS.contains(word.toLowerCase()) );
+
+                            if(!word.equals(""))
+                            {
+                                if(Utils.AVTAR_SIGNS.contains(word.toLowerCase()))
+                                {
+                                    words.add(word);
+                                    Log.e(TAG, "onClick: add " + word );
+                                }else{
+
+                                    for(int j=0; j < word.length();j++)
+                                    {
+                                        words.add(word.charAt(j) + "");
+                                        Log.e(TAG, "onClick: add " + word.charAt(j) );
+                                    }
+                                }
+
+                            }
+
                             word = "";
                         }else
                         {
@@ -233,46 +276,52 @@ public class LiveTranslation extends DaggerFragment {
                         }
                     }
 
-                    if(!word.equals(""))
-                    {
-                        words.add(word);
-                        Log.e(TAG, "onClick: add " + word );
-                    }
 
 
+                    Log.e(TAG, "onClick: wordsIndex " + wordsIndex );
                     wordsHandler = new Handler();
                     wordsRunnable = new Runnable() {
                         @Override
                         public void run() {
                             if(wordsIndex < words.size())
                             {
+
                                 firebaseStorage.getReference().child("Signs/" + words.get(wordsIndex) + ".gif").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         requestManager.asGif().load(uri.toString()).into(binding.avtarImageView);
                                         if(wordsIndex < words.size())
                                         {
+                                            if(wordsIndex < words.size()-1)
+                                            {
+                                                binding.runningSign.setText(words.get(wordsIndex));
+                                            }
                                             Log.e(TAG, "onSuccess: loaded a " + words.get(wordsIndex) );
+                                            wordsIndex++;
+
                                         }
+
                                     }
                                 });
-                                wordsIndex++;
+
                             }else
                             {
                                 wordsIndex = 0;
                                 wordsHandler = null;
                                 wordsRunnable = null;
+                                binding.runningSign.setText("");
+
                             }
 
                             if(wordsHandler != null || wordsRunnable != null)
                             {
-                                wordsHandler.postDelayed(this, 1000);
+                                wordsHandler.postDelayed(this, 3000);
                             }
                         }
                     };
                     if(wordsHandler != null || wordsRunnable != null)
                     {
-                        wordsHandler.postDelayed(wordsRunnable, 1000);
+                        wordsHandler.postDelayed(wordsRunnable, 3000);
                     }
 
                 }else
@@ -282,20 +331,26 @@ public class LiveTranslation extends DaggerFragment {
             }
         });
 
+
         binding.signTranslationButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 binding.avtarLayout.setVisibility(View.GONE);
                 binding.editTextLayout.setVisibility(View.GONE);
                 binding.signTranslationButton.setVisibility(View.GONE);
-                binding.translatedText.setVisibility(View.VISIBLE);
+                binding.translatedTextLayout.setVisibility(View.VISIBLE);
                 binding.avtarButton.setVisibility(View.VISIBLE);
 
 
 
                 binding.camera.open();
                 binding.camera.setVisibility(View.VISIBLE);
+                binding.camera.setAudio(Audio.OFF);
+                binding.camera.setFlash(Flash.OFF);
+                binding.camera.setMode(Mode.PICTURE);
+                binding.camera.setPlaySounds(false);
                 binding.camera.setLifecycleOwner(LiveTranslation.this);
 
                 handler = new Handler();
@@ -304,7 +359,9 @@ public class LiveTranslation extends DaggerFragment {
                     public void run() {
                         // binding.camera.setFilter(Filters.GRAYSCALE.newInstance());
                         binding.camera.setAudio(Audio.OFF);
+                        binding.camera.setFlash(Flash.OFF);
                         binding.camera.takePicture();
+
                         if(handler!= null && runnable != null) {
                             handler.postDelayed(this, 2000);
                         }
@@ -351,6 +408,22 @@ public class LiveTranslation extends DaggerFragment {
             }
         });
 
+        t1=new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    t1.setLanguage(Locale.UK);
+                }
+            }
+        });
+
+        binding.textToSpeech.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                t1.speak(binding.translatedText.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+
+            }
+        });
 
     }
 
@@ -421,6 +494,7 @@ public class LiveTranslation extends DaggerFragment {
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             binding.messageEditText.setText(result.get(0));
             Log.e(TAG, "onActivityResult: " +  (result.get(0)));
+
 
         }
     }

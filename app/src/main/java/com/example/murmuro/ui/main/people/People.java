@@ -21,10 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.murmuro.R;
 import com.example.murmuro.databinding.PeopleFragmentBinding;
+import com.example.murmuro.model.Conversation;
 import com.example.murmuro.model.DataResource;
 import com.example.murmuro.model.Message;
 import com.example.murmuro.model.Person;
@@ -53,7 +55,6 @@ public class People extends DaggerFragment {
 
     @Inject
     ViewModelProviderFactory providerFactory;
-
 
     FirebaseRecyclerPagingAdapter firebaseRecyclerPagingAdapter;
 
@@ -99,7 +100,7 @@ public class People extends DaggerFragment {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         binding.peopleId.setLayoutManager(linearLayoutManager);
 
-        mViewModel.getPersonsAdapter(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>>() {
+        mViewModel.getPersonsAdapter(getViewLifecycleOwner(),"").observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>>() {
             @Override
             public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
                 if(firebaseRecyclerPagingAdapterDataResource != null)
@@ -161,6 +162,153 @@ public class People extends DaggerFragment {
                 firebaseRecyclerPagingAdapter.refresh();
             }
         });
+
+      binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+          @Override
+          public boolean onQueryTextSubmit(String query) {
+              mViewModel.getPersonsAdapter(getViewLifecycleOwner(),query).observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>>() {
+                  @Override
+                  public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
+                      if(firebaseRecyclerPagingAdapterDataResource != null)
+                      {
+                          Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is not  null" );
+                          Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource status "  + firebaseRecyclerPagingAdapterDataResource.status);
+                          switch (firebaseRecyclerPagingAdapterDataResource.status)
+                          {
+                              case SUCCESS:{
+                                  firebaseRecyclerPagingAdapter = firebaseRecyclerPagingAdapterDataResource.data;
+                                  mViewModel.getPersonsMutableLiveData().observe(getViewLifecycleOwner(), new Observer<DataResource<List<Person>>>() {
+                                      @Override
+                                      public void onChanged(DataResource<List<Person>> listDataResource) {
+                                          if(listDataResource != null)
+                                          {
+                                              switch(listDataResource.status)
+                                              {
+                                                  case SUCCESS:{
+                                                      if(listDataResource.data != null)
+                                                      {
+                                                          if(listDataResource.data.size() == 0)
+                                                          {
+                                                              if(firebaseRecyclerPagingAdapter != null)
+                                                              {
+                                                                  firebaseRecyclerPagingAdapter.refresh();
+                                                              }
+                                                          }
+                                                      }
+                                                      break;
+                                                  }
+
+                                                  case LOADING:{
+                                                      break;
+                                                  }
+                                                  case ERROR:{
+                                                      binding.swipeRefreshLayout.setRefreshing(false);
+                                                      firebaseRecyclerPagingAdapter = null;
+                                                      if(listDataResource.data != null)
+                                                      {
+                                                         if(listDataResource.data.size() == 0)
+                                                         {
+                                                             Toast.makeText(getContext(), "not found search", Toast.LENGTH_SHORT).show();
+                                                         }
+                                                      }
+                                                      break;
+                                                  }
+                                              }
+                                          }
+                                      }
+                                  });
+                                  binding.peopleId.setAdapter(firebaseRecyclerPagingAdapter);
+                                  break;
+                              }
+
+                              case LOADING:{
+                                  binding.swipeRefreshLayout.setRefreshing(true);
+                                  break;
+                              }
+
+                              case ERROR:{
+                                  if(firebaseRecyclerPagingAdapterDataResource.message.equals("LOADED"))
+                                  {
+                                      binding.swipeRefreshLayout.setRefreshing(false);
+                                      Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "LOADED");
+
+
+                                  }else  if(firebaseRecyclerPagingAdapterDataResource.message.equals("FINISHED"))
+                                  {
+                                      binding.swipeRefreshLayout.setRefreshing(false);
+                                      Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "FINISHED" );
+
+                                  }else
+                                  {
+                                      Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + firebaseRecyclerPagingAdapterDataResource.message );
+                                  }
+
+                                  break;
+                              }
+                          }
+                      }else {
+                          Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is null" );
+                      }
+                  }
+              });
+              return false;
+          }
+
+          @Override
+          public boolean onQueryTextChange(String newText) {
+             if(newText.equals(""))
+             {
+                 mViewModel.getPersonsAdapter(getViewLifecycleOwner(),"").observe(getViewLifecycleOwner(), new Observer<DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>>>() {
+                     @Override
+                     public void onChanged(DataResource<FirebaseRecyclerPagingAdapter<Person, PeopleAdapter.MyViewHolder>> firebaseRecyclerPagingAdapterDataResource) {
+                         if(firebaseRecyclerPagingAdapterDataResource != null)
+                         {
+                             Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is not  null" );
+                             Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource status "  + firebaseRecyclerPagingAdapterDataResource.status);
+                             switch (firebaseRecyclerPagingAdapterDataResource.status)
+                             {
+                                 case SUCCESS:{
+                                     firebaseRecyclerPagingAdapter = firebaseRecyclerPagingAdapterDataResource.data;
+                                     binding.peopleId.setAdapter(firebaseRecyclerPagingAdapter);
+                                     break;
+                                 }
+
+                                 case LOADING:{
+                                     binding.swipeRefreshLayout.setRefreshing(true);
+                                     break;
+                                 }
+
+                                 case ERROR:{
+                                     if(firebaseRecyclerPagingAdapterDataResource.message.equals("LOADED"))
+                                     {
+                                         binding.swipeRefreshLayout.setRefreshing(false);
+                                         Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "LOADED");
+
+
+                                     }else  if(firebaseRecyclerPagingAdapterDataResource.message.equals("FINISHED"))
+                                     {
+                                         binding.swipeRefreshLayout.setRefreshing(false);
+                                         Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + "FINISHED" );
+
+                                     }else
+                                     {
+                                         Log.e(TAG, "firebaseRecyclerPagingAdapterDataResource: " + firebaseRecyclerPagingAdapterDataResource.message );
+                                     }
+
+                                     break;
+                                 }
+                             }
+                         }else {
+                             Log.e(TAG, "onChanged: firebaseRecyclerPagingAdapterDataResource is null" );
+                         }
+                     }
+                 });
+             }
+              return false;
+          }
+      });
+
+
 
     }
 

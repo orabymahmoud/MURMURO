@@ -53,22 +53,33 @@ public class CreateNew extends DaggerFragment implements StepperFormListener {
         {
             if(savedInstanceState.containsKey("user_name")) {
                 String userName = savedInstanceState.getString("user_name");
-                userNameStep.restoreStepData(userName);
+                if(userName != null && userNameStep != null) {
+                    userNameStep.restoreStepData(userName);
+                }
             }
 
             if(savedInstanceState.containsKey("name")) {
                 String name = savedInstanceState.getString("name");
-                nameStep.restoreStepData(name);
+                if(name != null && nameStep != null)
+                {
+                    nameStep.restoreStepData(name);
+                }
             }
 
             if(savedInstanceState.containsKey("email")) {
                 String email = savedInstanceState.getString("email");
-                emailStep.restoreStepData(email);
+                if(email != null && emailStep != null)
+                {
+                    emailStep.restoreStepData(email);
+                }
             }
 
             if(savedInstanceState.containsKey("password")) {
                 String password = savedInstanceState.getString("password");
-                passwordStep.restoreStepData(password);
+                if(password != null && passwordStep != null)
+                {
+                    passwordStep.restoreStepData(password);
+                }
             }
 
         }

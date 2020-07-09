@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.LifecycleOwner;
@@ -22,12 +23,10 @@ import com.bumptech.glide.RequestManager;
 import com.example.murmuro.R;
 import com.example.murmuro.model.Conversation;
 import com.example.murmuro.model.DataResource;
-import com.example.murmuro.model.Message;
 import com.example.murmuro.model.Person;
 import com.example.murmuro.model.User;
 import com.example.murmuro.storage.room.MurmuroRepositoryImp;
 import com.example.murmuro.ui.main.MainActivity;
-import com.example.murmuro.ui.main.people.PeopleAdapter;
 import com.github.abdularis.civ.CircleImageView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,21 +40,16 @@ import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions;
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter;
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+
+import static android.view.View.GONE;
 
 public class ConversationsViewModel extends ViewModel {
 
@@ -67,6 +61,7 @@ public class ConversationsViewModel extends ViewModel {
     private FirebaseStorage firebaseStorage;
     private RequestManager requestManager;
     private Activity activity;
+    private MutableLiveData<DataResource<List<Conversation>>> conversations =  new MutableLiveData<>();;
     private MutableLiveData<DataResource<User>> currentUserDataResourceMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>> conversationAdapterDataResourceMutableLiveData = new MutableLiveData<>();
 
@@ -121,8 +116,13 @@ public class ConversationsViewModel extends ViewModel {
         return currentUserDataResourceMutableLiveData;
     }
 
+    public MutableLiveData<DataResource<List<Conversation>>> getConversations() {
+        return conversations;
+    }
 
-    public MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>> getConversationAdapter(User user, LifecycleOwner lifecycleOwner){
+    public MutableLiveData<DataResource<FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>>>
+    getConversationAdapter(User user, LifecycleOwner lifecycleOwner, final String searchQuety){
+        final List<Conversation> conversationList = new ArrayList<>();
 
      if(isInternetAvailable())
      {
@@ -144,15 +144,37 @@ public class ConversationsViewModel extends ViewModel {
                  .setQuery(conversationDatabaseReference , config, Conversation.class)
                  .build();
 
-
-
          murmuroRepositoryImp.deleteAllConversations();
 
          FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>  firebaseRecyclerPagingAdapter
                  = new FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>(options) {
              @Override
              protected void onBindViewHolder(@NonNull ConversationAdapter.MyViewHolder myViewHolder, int i, @NonNull final Conversation conversation) {
-                 myViewHolder.bind(conversation);
+
+                 Log.e(TAG, "onBindViewHolder: " + conversation.getMembers().get(0).getName() );
+                 Log.e(TAG, "onBindViewHolder: " + conversation.getMembers().get(1).getName() );
+                 Log.e(TAG, "onBindViewHolder: " + searchQuety );
+
+                 if(!searchQuety.equals(""))
+                 {
+
+                     if(conversation.getMembers().get(0).getName().toLowerCase().contains(searchQuety.toLowerCase()) ||
+                             conversation.getMembers().get(1).getName().toLowerCase().contains(searchQuety.toLowerCase()))
+                     {
+                         myViewHolder.bind(conversation);
+                         conversationList.add(conversation);
+                     }else
+                     {
+                         myViewHolder.itemView.setVisibility(GONE);
+                     }
+
+                 }else
+                 {
+                     myViewHolder.bind(conversation);
+                     conversationList.add(conversation);
+                 }
+
+
                  Log.e(TAG, "onBindViewHolder: " + conversation.getDisplayMessage() );
                  List<Person> people = conversation.getMembers();
 
@@ -187,7 +209,7 @@ public class ConversationsViewModel extends ViewModel {
                      unread_messages.setText(unreadmessages_number + "");
                      display_message.setTextColor(Color.BLACK);
                  }else{
-                     unread_messages.setVisibility(View.GONE);
+                     unread_messages.setVisibility(GONE);
                  }
 
                  DatabaseReference databaseReference = firebaseDatabase.getReference().child("users").child(conversation.getMembers().get(friendUSer).getId());
@@ -217,7 +239,7 @@ public class ConversationsViewModel extends ViewModel {
                 myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                      @Override
                      public void onClick(View v) {
-                         MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                         MainActivity.bottomNavigationView.setVisibility(GONE);
                          Navigation.findNavController(getActivity(), R.id.host_fragment)
                                  .navigate(ConversationsDirections.actionConversationsToChat(conversation.getId()));
                      }
@@ -231,19 +253,36 @@ public class ConversationsViewModel extends ViewModel {
                      case LOADING_INITIAL:
                      case LOADING_MORE:
                          // Do your loading animation
-                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.loading((FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
+
+                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.loading(
+                                 (FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
                          break;
 
                      case LOADED:
                          // Stop Animation
-                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.error("LOADED" , (FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
+                         if(conversations != null)
+                         {
+                             conversations.setValue(DataResource.success(conversationList));
+                         }
+
+                         if(conversationList != null)
+                         {
+                             conversationList.clear();
+                         }
+                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.error("LOADED" ,
+                                 (FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
                          break;
 
                      case FINISHED:
                          //Reached end of Data set
-                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.error("FINISHED" , (FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
-
+                         conversationAdapterDataResourceMutableLiveData.setValue(DataResource.error("FINISHED" ,
+                                 (FirebaseRecyclerPagingAdapter<Conversation, ConversationAdapter.MyViewHolder>)null));
+                         if(conversations != null)
+                         {
+                             conversations.setValue(DataResource.error("" , (List<Conversation>) conversationList));
+                         }
                          break;
+
 
                      case ERROR:
                          retry();

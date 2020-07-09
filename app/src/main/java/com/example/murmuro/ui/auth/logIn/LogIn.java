@@ -4,6 +4,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,11 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.murmuro.R;
@@ -24,6 +28,10 @@ import com.example.murmuro.model.User;
 import com.example.murmuro.model.AuthResource;
 import com.example.murmuro.ui.main.MainActivity;
 import com.example.murmuro.viewModel.ViewModelProviderFactory;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import javax.inject.Inject;
 
@@ -34,7 +42,7 @@ public class LogIn extends DaggerFragment {
     private LogInViewModel mViewModel;
     private LogInFragmentBinding binding;
     private static final String TAG = "LogIn";
-
+    String m_Text = "";
     @Inject
     ViewModelProviderFactory providerFactory;
 
@@ -75,6 +83,53 @@ public class LogIn extends DaggerFragment {
             }
         });
 
+
+        binding.forgetpasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forgetPasswordDialog();
+            }
+        });
+
+    }
+
+    public void forgetPasswordDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter Your E-mail");
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT );
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                FirebaseAuth.getInstance().sendPasswordResetEmail(m_Text)
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                dialog.cancel();
+                                Toast.makeText(getContext(), e.toString() , Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email sent.");
+                                    dialog.cancel();
+                                    Toast.makeText(getContext(), "Rest password E-mail had sent Successfuly" , Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+
+
+        builder.show();
     }
 
     public void ObserveLogIn(){
