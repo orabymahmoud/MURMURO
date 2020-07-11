@@ -1,6 +1,8 @@
 # Murmuro
 Deaf People chat app
 
+![Documentation](murmuro_report.pdf)
+
 # Introduction
  This is software requirements specification document for American Sign Language (ASL) translator project.
 Sign languages (also known as signed languages) are languages that use the visual-manual modality to convey meaning. Sign languages are expressed through manual articulations in combination with non-manual elements.
@@ -124,5 +126,8 @@ The following two figures help you to visualize the interface of the application
 
 # Package Diagram
 ![Package Diagram](packagedigram.PNG)
+
+
+
 
 
