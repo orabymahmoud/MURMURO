@@ -102,7 +102,7 @@ public class LogIn extends DaggerFragment {
         input.setInputType(InputType.TYPE_CLASS_TEXT );
         builder.setView(input);
 
-// Set up the buttons
+        // Set up the buttons
         builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, int which) {
