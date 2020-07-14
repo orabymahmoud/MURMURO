@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by amitshekhar on 17/03/18.
@@ -61,11 +64,17 @@ public class TensorFlowImageClassifier implements Classifier {
     @Override
     public List<Recognition> recognizeImage(Bitmap bitmap) {
         ByteBuffer byteBuffer = convertBitmapToByteBuffer(bitmap);
+
+        Log.e(TAG, "recognizeImage: " + byteBuffer.asCharBuffer().length());
+
         if(quant){
+
             float[][] result = new float[1][labelList.size()];
             interpreter.run(byteBuffer, result);
             return getSortedResultFloat(result);
+
         } else {
+
             float [][] result = new float[1][labelList.size()];
             interpreter.run(byteBuffer, result);
             return getSortedResultFloat(result);
@@ -163,7 +172,6 @@ public class TensorFlowImageClassifier implements Classifier {
 
     @SuppressLint("DefaultLocale")
     private List<Recognition> getSortedResultFloat(float[][] labelProbArray) {
-
         PriorityQueue<Recognition> pq =
                 new PriorityQueue<>(
                         MAX_RESULTS,
@@ -176,6 +184,7 @@ public class TensorFlowImageClassifier implements Classifier {
 
         for (int i = 0; i < labelList.size(); ++i) {
             float confidence = labelProbArray[0][i];
+            Log.e(TAG, "getSortedResultFloat: " + labelProbArray[0][i] );
             if (confidence > THRESHOLD) {
                 pq.add(new Recognition("" + i,
                         labelList.size() > i ? labelList.get(i) : "unknown",
@@ -187,6 +196,8 @@ public class TensorFlowImageClassifier implements Classifier {
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());
+            Log.e(TAG, "getSortedResultFloat:  "+pq.poll() );
+
         }
 
         return recognitions;

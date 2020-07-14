@@ -8,6 +8,10 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -363,12 +367,12 @@ public class LiveTranslation extends DaggerFragment {
                         binding.camera.takePicture();
 
                         if(handler!= null && runnable != null) {
-                            handler.postDelayed(this, 2000);
+                            handler.postDelayed(this, 2);
                         }
                     }
                 };
                 if(handler!= null && runnable != null) {
-                    handler.postDelayed(runnable, 2000);
+                    handler.postDelayed(runnable, 2);
                 }
 
 
@@ -381,17 +385,19 @@ public class LiveTranslation extends DaggerFragment {
                             public void onBitmapReady(@Nullable Bitmap bitmap) {
 
                                 bitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+
                                 if(bitmap != null)
                                 {
-                                    final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
+                                    final List<Classifier.Recognition> results = classifier.recognizeImage(toGrayscale(bitmap));
 
-                                    Log.d(TAG, "oraby onBitmapReady: " + results.toString());
+
+                                    Log.e(TAG, "oraby onBitmapReady: " +  results);
 
                                     String message = "";
 
                                     for(int i=0; i<results.size();i++)
                                     {
-                                        message +=  results.get(i).getTitle() + " ";
+                                        message +=  results.get(i) + " ";
                                     }
 
                                     binding.messageEditText.setText(binding.messageEditText.getText() + message);
@@ -427,7 +433,21 @@ public class LiveTranslation extends DaggerFragment {
 
     }
 
-
+    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
+    }
     private void startVoiceInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);

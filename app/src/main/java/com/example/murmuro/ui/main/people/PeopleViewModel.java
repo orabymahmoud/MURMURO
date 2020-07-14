@@ -247,42 +247,42 @@ public class PeopleViewModel extends ViewModel {
             Log.e(TAG, "getPersonsAdapter: online " + isInternetAvailable() );
 
         }else{
-            Log.e(TAG, "getPersonsAdapter: offline  " + isInternetAvailable() );
-            final List<Person> offLinepersonList = new ArrayList<>();
-            murmuroRepositoryImp.getPersons()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorReturn(new Function<Throwable, List<Person>>() {
-                        @Override
-                        public List<Person> apply(Throwable throwable) throws Exception {
-                            List list = new LinkedList();
-                            Person person = new Person();
-                            person.setId("-1");
-                            return list;
-                        }
-                    })
-                    .map(new Function<List<Person>, Object>() {
-                        @Override
-                        public Object apply(List<Person> people) throws Exception {
-                            if(people.get(0).getId().equals("-1"))
-                            {
-                              //  resourceMutableLiveData.setValue(DataResource.error("Can not load People", (List<Person>) null));
-                                return null;
-                            }
-
-                            if(people != null)
-                            {
-                                for(int i=0; i<people.size(); i++){
-                                    offLinepersonList.add(people.get(i));
-                                }
-                            }
-
-                            Log.e(TAG, "getPeople: " + offLinepersonList.size() );
-                           // resourceMutableLiveData.setValue(DataResource.success(offLinepersonList));
-
-                            return people;
-                        }
-                    }).subscribe();
+//            Log.e(TAG, "getPersonsAdapter: offline  " + isInternetAvailable() );
+//            final List<Person> offLinepersonList = new ArrayList<>();
+//            murmuroRepositoryImp.getPersons()
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .onErrorReturn(new Function<Throwable, List<Person>>() {
+//                        @Override
+//                        public List<Person> apply(Throwable throwable) throws Exception {
+//                            List list = new LinkedList();
+//                            Person person = new Person();
+//                            person.setId("-1");
+//                            return list;
+//                        }
+//                    })
+//                    .map(new Function<List<Person>, Object>() {
+//                        @Override
+//                        public Object apply(List<Person> people) throws Exception {
+//                            if(people.get(0).getId().equals("-1"))
+//                            {
+//                              //  resourceMutableLiveData.setValue(DataResource.error("Can not load People", (List<Person>) null));
+//                                return null;
+//                            }
+//
+//                            if(people != null)
+//                            {
+//                                for(int i=0; i<people.size(); i++){
+//                                    offLinepersonList.add(people.get(i));
+//                                }
+//                            }
+//
+//                            Log.e(TAG, "getPeople: " + offLinepersonList.size() );
+//                           // resourceMutableLiveData.setValue(DataResource.success(offLinepersonList));
+//
+//                            return people;
+//                        }
+//                    }).subscribe();
         }
 
         return peopleAdapterDataResourceMutableLiveData;

@@ -48,6 +48,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class Conversations extends DaggerFragment {
@@ -63,7 +64,6 @@ public class Conversations extends DaggerFragment {
 
     @Inject
     RequestManager requestManager;
-
 
     FirebaseRecyclerPagingAdapter firebaseRecyclerPagingAdapter;
 
@@ -382,7 +382,16 @@ public class Conversations extends DaggerFragment {
 
         });
 
-
+        if(!mViewModel.isInternetAvailable())
+        {
+            binding.emptyData.setText("Check your internet connection");
+            binding.emptyData.setVisibility(VISIBLE);
+            binding.swipeRefreshLayout.setRefreshing(false);
+        }else
+        {
+            binding.emptyData.setVisibility(GONE);
+            binding.swipeRefreshLayout.setRefreshing(false);
+        }
 
         if(firebaseRecyclerPagingAdapter != null)
         {
@@ -398,7 +407,21 @@ public class Conversations extends DaggerFragment {
         binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                firebaseRecyclerPagingAdapter.refresh();
+                if(firebaseRecyclerPagingAdapter != null)
+                {
+                    firebaseRecyclerPagingAdapter.refresh();
+                }
+
+                if(!mViewModel.isInternetAvailable())
+                {
+                    binding.emptyData.setText("Check your internet connection");
+                    binding.emptyData.setVisibility(VISIBLE);
+                    binding.swipeRefreshLayout.setRefreshing(false);
+                }else
+                {
+                    binding.emptyData.setVisibility(GONE);
+                    binding.swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
 

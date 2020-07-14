@@ -345,7 +345,7 @@ public class ConversationsViewModel extends ViewModel {
         return conversationAdapterDataResourceMutableLiveData;
     }
 
-    private boolean isInternetAvailable() {
+    public boolean isInternetAvailable() {
         try {
             final String command = "ping -c 1 google.com";
             return Runtime.getRuntime().exec(command).waitFor() == 0;
