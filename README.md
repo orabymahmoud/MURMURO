@@ -16,7 +16,7 @@ Project is created with:
 * 3d Avatar
 * Android application to integrate model and avtar
 #Video
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/vt5fpE0bzSY)
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://drive.google.com/file/d/1fN6hYW20ACz9GcG1p2zPKS18uNWoNBPw/view)
 
 
 # Screens
