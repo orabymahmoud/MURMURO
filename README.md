@@ -15,8 +15,9 @@ Project is created with:
 * Machine learning model
 * 3d Avatar
 * Android application to integrate model and avtar
-#Video
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://drive.google.com/file/d/1fN6hYW20ACz9GcG1p2zPKS18uNWoNBPw/view)
+
+# Video
+[![Watch the video](app5.jpg)](https://drive.google.com/file/d/1fN6hYW20ACz9GcG1p2zPKS18uNWoNBPw/view)
 
 
 # Screens
